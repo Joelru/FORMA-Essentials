@@ -12,12 +12,13 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#2D2926] text-[#FAF7F5] pt-14 pb-24 md:pb-12 border-t border-[#B76E79]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-10 border-b border-white/10">
-          {/* Brand Column with Custom Symbol */}
+          {/* Brand Column with Full Presence */}
           <div className="md:col-span-5 space-y-3.5">
-            <FormaLogo size="md" variant="light" showWordmark={true} />
-            <p className="text-xs sm:text-sm text-[#FAF7F5]/75 leading-relaxed max-w-md">
-              Estudio de diseño de cejas por {settings.ownerName} y tienda de maquillaje
-              100% original con entregas rápidas en Ocaña, Norte de Santander.
+            <FormaLogo size="md" variant="light" showWordmark={true} showSubtitle={true} />
+            <p className="text-xs sm:text-sm text-[#FAF7F5]/75 leading-relaxed max-w-md pt-1">
+              Estudio especializado en diseño arquitectónico de cejas, visagismo, laminado
+              profesional y boutique de maquillaje 100% original seleccionado por{' '}
+              <strong>{settings.ownerName}</strong> con entregas rápidas en Ocaña, Norte de Santander.
             </p>
             <div className="pt-1 flex items-center gap-2 text-xs text-[#F4C2C2]">
               <MapPin className="w-4 h-4 text-[#B76E79] shrink-0" />
@@ -25,20 +26,20 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Links (Only Client Sections — No Admin Button) */}
+          {/* Quick Links (Public Store Only — Admin Hidden) */}
           <div className="md:col-span-3 space-y-3">
             <h4 className="font-serif text-lg font-bold text-[#F4C2C2] tracking-wide">
-              Navegación
+              Explorar FORMA
             </h4>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#FAF7F5]/80">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-[#FAF7F5]/80">
               <li>
                 <a href="#catalogo" className="hover:text-[#F4C2C2] transition-colors">
-                  Tienda de Maquillaje
+                  Catálogo de Maquillaje & Cejas
                 </a>
               </li>
               <li>
                 <a href="#citas-eslen" className="hover:text-[#F4C2C2] transition-colors">
-                  Agendar Cita con Eslen
+                  Agendar Cita de Cejas con Eslen
                 </a>
               </li>
             </ul>
@@ -47,10 +48,10 @@ export const Footer: React.FC = () => {
           {/* Dynamic Social Networks */}
           <div className="md:col-span-4 space-y-3">
             <h4 className="font-serif text-lg font-bold text-[#F4C2C2] tracking-wide">
-              Redes Oficiales
+              Síguenos & Contáctanos
             </h4>
             <p className="text-xs text-[#FAF7F5]/70">
-              Conoce resultados reales de cejas y recomendaciones en nuestras redes:
+              Conoce resultados reales de cejas y tutoriales de rutina en nuestras redes oficiales:
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
@@ -77,7 +78,7 @@ export const Footer: React.FC = () => {
               >
                 <Sparkles className="w-4 h-4 text-[#F4C2C2]" />
                 <div>
-                  <span className="block text-[10px] text-white/60">TikTok</span>
+                  <span className="block text-[10px] text-white/60">TikTok Oficial</span>
                   <span>{settings.tiktokHandle}</span>
                 </div>
               </a>
@@ -94,7 +95,7 @@ export const Footer: React.FC = () => {
                 className="inline-flex items-center gap-2 text-xs font-semibold text-[#6B9080] bg-white px-4 py-2.5 rounded-xl hover:bg-[#FDF2F4] transition-colors"
               >
                 <Phone className="w-4 h-4 text-[#6B9080]" />
-                <span>WhatsApp: +57 {settings.whatsappNumber}</span>
+                <span>WhatsApp Estudio: +57 {settings.whatsappNumber}</span>
               </a>
             </div>
           </div>
@@ -102,10 +103,10 @@ export const Footer: React.FC = () => {
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FAF7F5]/55">
           <p>
-            © {new Date().getFullYear()} <strong>FORMA</strong> por Eslen • Ocaña, Norte de Santander.
+            © {new Date().getFullYear()} <strong>FORMA</strong> por Eslen • Ocaña, Norte de Santander, Colombia.
           </p>
           <p className="flex items-center gap-1">
-            Estudio de Cejas & Maquillaje <Heart className="w-3.5 h-3.5 text-[#B76E79] fill-[#B76E79]" />
+            Diseñado con estética Clean Girl & Luxury Beauty <Heart className="w-3.5 h-3.5 text-[#B76E79] fill-[#B76E79]" />
           </p>
         </div>
       </div>

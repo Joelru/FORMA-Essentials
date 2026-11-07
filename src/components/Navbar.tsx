@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
       <div className="bg-[#2D2926] text-[#FAF7F5] text-xs py-2 px-4 border-b border-[#B76E79]/20">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2 mx-auto md:mx-0 text-center">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#F4C2C2]" />
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#F4C2C2] animate-pulse" />
             <p className="font-medium tracking-wide text-[11px] sm:text-xs text-[#FDF2F4]">
               {settings.announcementText}
             </p>
@@ -58,7 +58,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"
             >
-              {settings.instagramHandle}
+              IG: {settings.instagramHandle}
+            </a>
+            <span>•</span>
+            <a
+              href={settings.tiktokUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              TikTok: {settings.tiktokHandle}
             </a>
           </div>
         </div>
@@ -96,36 +105,36 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
       <header className="sticky top-0 z-40 bg-[#FAF7F5]/90 backdrop-blur-md border-b border-[#F4C2C2]/40 transition-all">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           {/* Left: Navigation Links (Desktop) */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#2D2926]/80">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#2D2926]/80">
             <button
               onClick={() => scrollToSection('catalogo')}
               className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4 text-[#B76E79]" />
-              Tienda
+              Tienda de Maquillaje
             </button>
             <button
               onClick={() => scrollToSection('citas-eslen')}
               className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5"
             >
               <Calendar className="w-4 h-4 text-[#B76E79]" />
-              Agendar Cita
+              Agendar Cita con Eslen
             </button>
           </nav>
 
-          {/* Center: Clean FORMA Symbol + Wordmark */}
+          {/* Center: Prominent FORMA Brand Lockup (Detailed Emblem + Wordmark + Subtitle) */}
           <button
             onClick={() => {
               setActiveView('store');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="focus:outline-none group"
+            className="text-left md:text-center group focus:outline-none"
             aria-label="Inicio FORMA"
           >
-            <FormaLogo size="md" showWordmark={true} />
+            <FormaLogo size="md" showWordmark={true} showSubtitle={true} />
           </button>
 
-          {/* Right: Socials & Shopping Bag */}
+          {/* Right: Socials & Shopping Bag (Admin Hidden from Public UI) */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             <a
               href={settings.instagramUrl}
@@ -140,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
             {/* Cart Trigger Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 bg-[#B76E79] hover:bg-[#9A5660] text-white px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium shadow-sm transition-all active:scale-95"
+              className="relative flex items-center gap-2 bg-[#B76E79] hover:bg-[#9A5660] text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium shadow-sm transition-all active:scale-95"
               aria-label="Abrir carrito de compras"
             >
               <ShoppingBag className="w-4 h-4" />
@@ -153,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
         </div>
       </header>
 
-      {/* Mobile-First Bottom Fixed Bar (3 Clean Client Actions — No Admin Button) */}
+      {/* Mobile-First Bottom Fixed Bar (Hidden Admin) */}
       {activeView === 'store' && (
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F5]/95 backdrop-blur-lg border-t border-[#F4C2C2]/60 px-3 py-1.5 shadow-[0_-4px_20px_rgba(45,41,38,0.06)]">
           <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
@@ -170,7 +179,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
               className="flex flex-col items-center justify-center py-1.5 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors"
             >
               <Calendar className="w-5 h-5 text-[#B76E79]" />
-              <span className="text-[11px] font-medium mt-0.5">Agendar Cita</span>
+              <span className="text-[11px] font-medium mt-0.5">Citas Eslen</span>
             </button>
 
             <button
@@ -185,7 +194,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
                   </span>
                 )}
               </div>
-              <span className="text-[11px] font-medium mt-0.5">Mi Bolsa</span>
+              <span className="text-[11px] font-medium mt-0.5">Carrito</span>
             </button>
           </div>
         </nav>

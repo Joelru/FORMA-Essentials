@@ -6,12 +6,16 @@ import {
   Award,
   Truck,
   Banknote,
+  Star,
   ArrowRight,
   MapPin
 } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
 import { FormaLogo } from './FormaLogo';
 
 export const HeroSection: React.FC = () => {
+  const { settings } = useStore();
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -40,39 +44,54 @@ export const HeroSection: React.FC = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-8 pb-12 sm:py-16 border-b border-[#F4C2C2]/40">
-      {/* Subtle Ambient Glow */}
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 pb-12 sm:py-16 border-b border-[#F4C2C2]/40">
+      {/* Subtle Luxury Ambient Circles */}
       <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#F4C2C2]/25 blur-3xl" />
+      <div className="pointer-events-none absolute top-40 -left-24 w-80 h-80 rounded-full bg-[#E8A598]/20 blur-3xl" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Minimalist, Breathable Brand Presentation */}
+          {/* Left Column: Full Brand Presence & Value Proposition */}
           <div className="lg:col-span-7 text-center lg:text-left">
-            {/* Pure Symbol Mark + Location Pill */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 mb-6">
-              <FormaLogo size="lg" showWordmark={false} />
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#F4C2C2] text-xs font-medium text-[#2D2926]/75 shadow-sm">
-                <MapPin className="w-3.5 h-3.5 text-[#B76E79]" />
-                <span>Estudio de Cejas & Maquillaje • Ocaña</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#F4C2C2] shadow-sm mb-5">
+              <Sparkles className="w-3.5 h-3.5 text-[#B76E79]" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#2D2926]">
+                ESTUDIO FORMA • {settings.city.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Prominent FORMA Emblem + Brand Block */}
+            <div className="mb-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <FormaLogo size="xl" showWordmark={false} />
+              <div>
+                <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
+                  FORMA
+                </span>
+                <span className="block text-xs sm:text-sm uppercase tracking-[0.3em] text-[#B76E79] font-semibold mt-2">
+                  LUXURY BEAUTY STUDIO • BY ESLEN
+                </span>
               </div>
             </div>
 
-            <h1 className="font-serif text-3xl sm:text-5xl lg:text-[52px] font-semibold text-[#2D2926] leading-[1.14] tracking-tight">
-              Diseño de Cejas por{' '}
-              <span className="italic font-normal text-[#B76E79]">Eslen</span> &
-              Maquillaje para tu Rutina.
+            <h1 className="font-serif text-2xl sm:text-4xl lg:text-[42px] font-semibold text-[#2D2926] leading-[1.18] mt-4">
+              Diseño Profesional de Cejas por{' '}
+              <span className="italic font-normal text-[#B76E79] underline decoration-[#F4C2C2] underline-offset-4">
+                Eslen
+              </span>{' '}
+              & Maquillaje Seleccionado para tu Rutina.
             </h1>
 
-            <p className="mt-4 text-sm sm:text-base text-[#2D2926]/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Visagismo personalizado para realzar tu mirada y esenciales de
-              maquillaje seleccionados en el estudio con entrega rápida en Ocaña.
+            <p className="mt-4 text-sm sm:text-base text-[#2D2926]/75 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              Bienvenida a <strong className="text-[#2D2926] font-semibold">FORMA</strong>.
+              Un espacio de estética <span className="italic">Clean Girl</span> en Ocaña donde la arquitectura
+              de tu mirada se une con los productos de maquillaje, fijación e hidratación que Eslen utiliza y recomienda en su estudio.
             </p>
 
-            {/* Two Primary CTAs */}
-            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5">
+            {/* Primary High-Contrast CTAs */}
+            <div className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5">
               <button
                 onClick={() => scrollTo('catalogo')}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-7 py-4 rounded-2xl shadow-luxury transition-all transform hover:-translate-y-0.5 text-sm sm:text-base"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-7 py-4 rounded-2xl shadow-luxury transition-all transform hover:-translate-y-0.5 active:scale-98 text-sm sm:text-base"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Explorar Maquillaje</span>
@@ -87,36 +106,68 @@ export const HeroSection: React.FC = () => {
                 <span>Agendar Cita de Cejas</span>
               </button>
             </div>
+
+            {/* Social Proof Pill */}
+            <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-[#2D2926]/75">
+              <div className="flex items-center gap-1 bg-white/80 px-3 py-1.5 rounded-full border border-[#F4C2C2]/60">
+                <div className="flex text-[#B76E79]">
+                  {[...Array(5)].map((_, idx) => (
+                    <Star key={idx} className="w-3.5 h-3.5 fill-[#B76E79]" />
+                  ))}
+                </div>
+                <span className="font-semibold text-[#2D2926] ml-1">4.9/5</span>
+                <span>• +450 clientas felices en Ocaña</span>
+              </div>
+              <div className="flex items-center gap-1 text-[#6B9080] font-medium">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>Despachos el mismo día en el casco urbano</span>
+              </div>
+            </div>
           </div>
 
-          {/* Right Column: Clean Editorial Portrait Card */}
+          {/* Right Column: Editorial Luxury Card with Realistic Sculpted Eyebrows */}
           <div className="lg:col-span-5">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-luxury bg-[#FDF2F4] aspect-[4/4.2]">
+              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-luxury bg-[#FDF2F4] aspect-[4/4.3]">
                 <img
-                  src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=85"
-                  alt="FORMA - Diseño de Cejas y Maquillaje por Eslen"
+                  src="/hero-brows.jpg"
+                  alt="FORMA por Eslen - Diseño Profesional de Cejas y Brow Lamination"
                   className="w-full h-full object-cover object-center"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/70 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/80 via-[#2D2926]/10 to-transparent" />
 
-                {/* Minimal Bottom Caption */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-[#F4C2C2]/60 flex items-center justify-between gap-3">
-                  <div>
-                    <p className="font-serif text-lg font-bold text-[#2D2926]">
-                      Visagismo & Brow Lamination
-                    </p>
-                    <p className="text-xs text-[#2D2926]/70">
-                      Atención con cita previa en Ocaña
-                    </p>
+                {/* Floating Top Tag */}
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                  <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-xs font-semibold tracking-wider shadow-sm">
+                    ✨ ESTUDIO & BOUTIQUE
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-semibold shadow-sm">
+                    Agenda Abierta
+                  </span>
+                </div>
+
+                {/* Bottom Overlay Caption */}
+                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-[#F4C2C2]/60">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-[#B76E79] font-bold">
+                        ARQUITECTURA DE MIRADA • FORMA
+                      </p>
+                      <p className="font-serif text-lg font-bold text-[#2D2926]">
+                        Visagismo, Brow Lamination & Maquillaje
+                      </p>
+                      <p className="text-xs text-[#2D2926]/70 mt-0.5">
+                        Atención personalizada por Eslen en Ocaña, N. de S.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => scrollTo('citas-eslen')}
+                      className="shrink-0 w-10 h-10 rounded-xl bg-[#B76E79] text-white flex items-center justify-center hover:bg-[#9A5660] transition-colors"
+                      aria-label="Ir a agendar cita"
+                    >
+                      <ArrowRight className="w-5 h-5" />
+                    </button>
                   </div>
-                  <button
-                    onClick={() => scrollTo('citas-eslen')}
-                    className="shrink-0 w-10 h-10 rounded-xl bg-[#B76E79] text-white flex items-center justify-center hover:bg-[#9A5660] transition-colors"
-                    aria-label="Agendar cita"
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </button>
                 </div>
               </div>
             </div>
