@@ -20,13 +20,13 @@ import { getFirebaseDb, doc, setDoc, onSnapshot, getDoc } from '../lib/firebase'
 import { playNotificationChime } from '../utils/format';
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'forma_store_products_v2',
-  ORDERS: 'forma_store_orders_v2',
-  APPOINTMENTS: 'forma_store_appointments_v2',
-  SETTINGS: 'forma_store_settings_v2',
-  VISITS: 'forma_store_visits_v2',
-  CART: 'forma_store_cart_v2',
-  SESSION_VISITED: 'forma_store_session_visited_v2',
+  PRODUCTS: 'forma_store_products_v3',
+  ORDERS: 'forma_store_orders_v3',
+  APPOINTMENTS: 'forma_store_appointments_v3',
+  SETTINGS: 'forma_store_settings_v3',
+  VISITS: 'forma_store_visits_v3',
+  CART: 'forma_store_cart_v3',
+  SESSION_VISITED: 'forma_store_session_visited_v3',
 };
 
 interface CreateOrderInput {
@@ -95,6 +95,7 @@ interface StoreContextType {
   // Admin Settings
   updateSettings: (newSettings: StoreSettings) => void;
   syncAllToFirebase: () => Promise<boolean>;
+  resetAllMetricsToZero: () => Promise<void>;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -126,7 +127,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     loadFromStorage<StoreSettings>(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS)
   );
   const [visitsCount, setVisitsCount] = useState<number>(() =>
-    loadFromStorage<number>(STORAGE_KEYS.VISITS, 384)
+    loadFromStorage<number>(STORAGE_KEYS.VISITS, 0)
   );
   const [cart, setCart] = useState<CartItem[]>(() =>
     loadFromStorage<CartItem[]>(STORAGE_KEYS.CART, [])
@@ -618,6 +619,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [pushToFirestore]
   );
 
+  // 7. Reset All Metrics, Clicks, Visits, Orders & Appointments to 0
+  const resetAllMetricsToZero = useCallback(async () => {
+    const zeroedProducts = products.map((p) => ({ ...p, clicks_count: 0 }));
+    setProducts(zeroedProducts);
+    setOrders([]);
+    setAppointments([]);
+    setVisitsCount(0);
+    prevOrdersCount.current = 0;
+
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(zeroedProducts));
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(0));
+
+    await pushToFirestore({
+      products: zeroedProducts,
+      orders: [],
+      appointments: [],
+      visitsCount: 0,
+    });
+  }, [products, pushToFirestore]);
+
   const dismissAlert = useCallback(() => {
     setLatestAlert(null);
   }, []);
@@ -657,6 +680,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteProduct,
         updateSettings,
         syncAllToFirebase,
+        resetAllMetricsToZero,
       }}
     >
       {children}

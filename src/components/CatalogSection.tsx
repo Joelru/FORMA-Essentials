@@ -45,8 +45,10 @@ export const CatalogSection: React.FC = () => {
   };
 
   return (
-    <section id="catalogo" className="py-12 sm:py-16 bg-[#FAF7F5]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="catalogo" className="relative py-10 sm:py-16 bg-luxury-silk overflow-hidden">
+      {/* Subtle Architectural Luxury Frame Accent */}
+      <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#E8A598]/60 to-transparent" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FDF2F4] border border-[#F4C2C2] text-[#B76E79] text-xs font-semibold uppercase tracking-widest mb-3">

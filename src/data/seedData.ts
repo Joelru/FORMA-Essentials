@@ -48,11 +48,33 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     usageTip:
       'Peina tus cejas hacia arriba en ángulo de 45° con una mínima cantidad de producto antes de aplicar cualquier sombra o lápiz. Luego presiona suavemente con el cabo del cepillo para sellar el efecto laminado.',
-    clicks_count: 42,
-    createdAt: '2026-10-15T10:00:00.000Z'
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:00:00.000Z'
   },
   {
     id: 'prod-forma-02',
+    name: 'Suero de Cejas y Pestañas FORMA (Brow & Lash Serum)',
+    category: 'Cuidado y Fijación de Cejas',
+    price: 62000,
+    stock: 15,
+    paused: false,
+    badge: 'Recomendado por Eslen',
+    image: '/forma-serum.jpg',
+    description:
+      'Elixir botánico concentrado oficial de FORMA Estudio & Cosmética con péptidos bio-activos, biotina, aceite de ricino prensado en frío y vitamina E. Recupera cejas despobladas y fortalece tus pestañas desde la raíz.',
+    benefits: [
+      'Estimula los folículos para mayor densidad y grosor en 4 a 6 semanas',
+      'Ideal post-laminado para nutrir e hidratar profundamente',
+      'Fórmula hipoalergénica de rápida absorción sin sensación grasa',
+      'Presentación oficial FORMA con gotero dosificador de precisión'
+    ],
+    usageTip:
+      'Aplícalo todas las noches después de desmaquillarte sobre la raíz de las cejas y pestañas limpias. La constancia durante 30 días transforma por completo el marco de tu mirada.',
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:05:00.000Z'
+  },
+  {
+    id: 'prod-forma-03',
     name: 'Pomada Profesional para Cejas Waterproof',
     category: 'Cuidado y Fijación de Cejas',
     price: 45000,
@@ -70,11 +92,11 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     usageTip:
       'Toma producto con pincel biselado ultra fino, descarga el exceso en el dorso de tu mano y concentra el color de la mitad hacia la cola de la ceja. Difumina el inicio solo con lo que sobra en la brocha.',
-    clicks_count: 37,
-    createdAt: '2026-10-16T11:30:00.000Z'
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:10:00.000Z'
   },
   {
-    id: 'prod-forma-03',
+    id: 'prod-forma-04',
     name: 'Kit de Diseño y Sombreado FORMA',
     category: 'Kits Recomendados por Eslen',
     price: 89000,
@@ -92,11 +114,11 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     usageTip:
       'Usa el tono más claro en el primer centímetro del inicio de la ceja y el tono más profundo desde el arco hasta la punta para lograr el icónico efecto Ombré de FORMA.',
-    clicks_count: 54,
-    createdAt: '2026-10-18T14:20:00.000Z'
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:15:00.000Z'
   },
   {
-    id: 'prod-forma-04',
+    id: 'prod-forma-05',
     name: 'Lápiz Microblading Precisión Pelo a Pelo',
     category: 'Ojos',
     price: 34000,
@@ -114,30 +136,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     usageTip:
       'Con la piel completamente limpia y seca (antes de la base), realiza trazos cortos y suaves siguiendo la dirección natural del crecimiento de tus vellos.',
-    clicks_count: 29,
-    createdAt: '2026-10-20T09:15:00.000Z'
-  },
-  {
-    id: 'prod-forma-05',
-    name: 'Suero Botánico Crecimiento de Cejas y Pestañas',
-    category: 'Cuidado y Fijación de Cejas',
-    price: 62000,
-    stock: 11,
-    paused: false,
-    badge: 'Recomendado por Eslen',
-    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=900&q=85',
-    description:
-      'Elixir nocturno concentrado con péptidos bio-activos, aceite de ricino prensado en frío, romero y vitamina E. Recupera cejas despobladas y fortalece tus pestañas desde la raíz.',
-    benefits: [
-      'Estimula los folículos inactivos para mayor densidad en 4 a 6 semanas',
-      'Ideal post-laminado para nutrir e hidratar profundamente',
-      'Fórmula hipoalergénica libre de prostaglandinas irritantes',
-      'Textura ligera de rápida absorción sin sensación grasa'
-    ],
-    usageTip:
-      'Aplícalo todas las noches después de desmaquillarte sobre la raíz de las cejas y pestañas limpias. La constancia durante 30 días transforma por completo el grosor de tu ceja.',
-    clicks_count: 33,
-    createdAt: '2026-10-22T16:40:00.000Z'
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:20:00.000Z'
   },
   {
     id: 'prod-forma-06',
@@ -158,30 +158,8 @@ export const INITIAL_PRODUCTS: Product[] = [
     ],
     usageTip:
       'Traza una línea fina justo debajo del arco de tu ceja con el lado mate para enmarcar, difumina hacia el párpado y finaliza con un toque del lado satinado en el punto más alto del arco.',
-    clicks_count: 25,
-    createdAt: '2026-10-25T12:00:00.000Z'
-  },
-  {
-    id: 'prod-forma-07',
-    name: 'Tinta Hidratante & Gloss Voluminizador Rose Nude',
-    category: 'Labios',
-    price: 36000,
-    stock: 16,
-    paused: false,
-    badge: 'Nuevo',
-    image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=900&q=80',
-    description:
-      'El complemento perfecto para unas cejas laminadas: labios jugosos con ácido hialurónico, péptidos y un subtono Rose Gold translúcido que favorece todos los tonos de piel.',
-    benefits: [
-      'Brillo espejo sin sensación pegajosa',
-      'Hidratación profunda con Ácido Hialurónico y Aceite de Jojoba',
-      'Tono Rose Nude universal para estética Clean Girl',
-      'Aroma delicado a vainilla francesa'
-    ],
-    usageTip:
-      'Úsalo solo para un look fresco de día después de tu cita de cejas, o sobre tu delineador nude favorito para mayor volumen en los labios.',
-    clicks_count: 19,
-    createdAt: '2026-10-28T15:10:00.000Z'
+    clicks_count: 0,
+    createdAt: '2026-11-06T10:25:00.000Z'
   }
 ];
 
@@ -233,10 +211,10 @@ export const BROW_SERVICES: BrowService[] = [
 
 export const INITIAL_SETTINGS: StoreSettings = {
   brandName: 'FORMA',
-  brandSubtitle: 'POR ESLEN • OCAÑA',
+  brandSubtitle: 'ESTUDIO & COSMÉTICA • POR ESLEN',
   ownerName: 'Eslen',
   city: 'Ocaña, Norte de Santander',
-  studioAddress: 'Estudio FORMA — Ocaña, Norte de Santander',
+  studioAddress: 'FORMA Estudio & Cosmética — Ocaña, Norte de Santander',
   instagramUrl: 'https://instagram.com/forma.estudio',
   instagramHandle: '@forma.estudio',
   tiktokUrl: 'https://tiktok.com/@forma.estudio',
@@ -247,74 +225,7 @@ export const INITIAL_SETTINGS: StoreSettings = {
   announcementText: '✨ Entregas rápidas en Ocaña • Pago Contra Entrega, Nequi o Daviplata'
 };
 
-export const INITIAL_ORDERS: Order[] = [
-  {
-    id: 'ORD-1021',
-    customerName: 'Valentina Quintero Coronel',
-    customerPhone: '3147829102',
-    neighborhood: 'Primavera',
-    address: 'Calle 11 # 14-32 Edificio Mirador Apto 302 (Frente a la panadería)',
-    paymentMethod: 'Nequi',
-    notes: 'Entregar después de las 3:00 PM en portería por favor.',
-    items: [
-      {
-        productId: 'prod-forma-01',
-        name: 'Gel Fijador de Cejas Extra Fuerte FORMA',
-        price: 38000,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?auto=format&fit=crop&w=900&q=85'
-      },
-      {
-        productId: 'prod-forma-06',
-        name: 'Iluminador & Corrector de Arco de Ceja Rose Glow',
-        price: 41000,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=900&q=85'
-      }
-    ],
-    total: 79000,
-    status: 'Despachado / Entregado',
-    createdAt: '2026-11-05T15:20:00.000Z',
-    isNew: false
-  },
-  {
-    id: 'ORD-1022',
-    customerName: 'Camila Andrea Pacheco',
-    customerPhone: '3186543210',
-    neighborhood: 'El Lago',
-    address: 'Carrera 12 # 8-45 Casa Blanca Rejas Negras segundo piso',
-    paymentMethod: 'Efectivo Contra Entrega',
-    notes: 'Llevo efectivo exacto.',
-    items: [
-      {
-        productId: 'prod-forma-03',
-        name: 'Kit de Diseño y Sombreado FORMA',
-        price: 89000,
-        quantity: 1,
-        image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=85'
-      }
-    ],
-    total: 89000,
-    status: 'Pendiente por Despachar',
-    createdAt: '2026-11-06T18:10:00.000Z',
-    isNew: true
-  }
-];
+// Bases de datos vacías (en 0) para iniciar en producción limpia
+export const INITIAL_ORDERS: Order[] = [];
 
-export const INITIAL_APPOINTMENTS: Appointment[] = [
-  {
-    id: 'CITA-201',
-    customerName: 'Laura Sofía Vergel',
-    customerPhone: '3169081122',
-    serviceId: 'srv-01',
-    serviceName: 'Diseño de Cejas + Sombreado Semipermanente',
-    servicePrice: 35000,
-    serviceDuration: '45 min',
-    preferredDate: '2026-11-08',
-    preferredTimeSlot: 'Tarde (2:00 PM - 6:30 PM)',
-    notes: 'Me gustaría a las 4:00 PM si tienes espacio disponible.',
-    status: 'Pendiente',
-    createdAt: '2026-11-06T16:45:00.000Z',
-    isNew: true
-  }
-];
+export const INITIAL_APPOINTMENTS: Appointment[] = [];

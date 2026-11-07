@@ -8,9 +8,11 @@ import {
   Banknote,
   Star,
   ArrowRight,
+  ChevronDown,
   MapPin
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
+import { FormaLogo } from './FormaLogo';
 
 export const HeroSection: React.FC = () => {
   const { settings } = useStore();
@@ -42,31 +44,63 @@ export const HeroSection: React.FC = () => {
     },
   ];
 
+  const marqueeItems = [
+    'FORMA • ESTUDIO & COSMÉTICA',
+    'DISEÑO PROFESIONAL DE CEJAS POR ESLEN',
+    'MAQUILLAJE 100% ORIGINAL',
+    'VISAGISMO & LAMINADO DE CEJAS',
+    'ENTREGAS RÁPIDAS EN OCAÑA',
+    'PAGO CONTRA ENTREGA • NEQUI • DAVIPLATA',
+  ];
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 pb-12 sm:py-16 border-b border-[#F4C2C2]/40">
-      {/* Subtle Ambient Circles */}
-      <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#F4C2C2]/25 blur-3xl" />
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 sm:pt-12">
+      {/* Subtle Luxury Ambient Glows & Architectural Curves (Pure SVG/CSS, Zero Lag) */}
+      <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#F4C2C2]/30 blur-3xl" />
       <div className="pointer-events-none absolute top-40 -left-24 w-80 h-80 rounded-full bg-[#E8A598]/20 blur-3xl" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      {/* Delicate Rose Gold Architectural Contour Lines in Background */}
+      <svg
+        className="pointer-events-none absolute inset-0 w-full h-full opacity-[0.18]"
+        viewBox="0 0 1440 800"
+        fill="none"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M-100 180 C 320 40, 820 340, 1540 120"
+          stroke="#B76E79"
+          strokeWidth="1.2"
+          strokeDasharray="4 6"
+        />
+        <path
+          d="M-100 520 C 420 680, 980 360, 1540 560"
+          stroke="#E8A598"
+          strokeWidth="1.5"
+        />
+      </svg>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative pb-12 sm:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Full Brand Presence & Value Proposition (Without Graphic Logo) */}
+          {/* Left Column: Full Brand Presence & Value Proposition */}
           <div className="lg:col-span-7 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#F4C2C2] shadow-sm mb-5">
               <Sparkles className="w-3.5 h-3.5 text-[#B76E79]" />
               <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#2D2926]">
-                ESTUDIO FORMA • {settings.city.toUpperCase()}
+                ESTUDIO &amp; COSMÉTICA • {settings.city.toUpperCase()}
               </span>
             </div>
 
-            {/* Prominent FORMA Typographic Brand Block */}
-            <div className="mb-3">
-              <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
-                FORMA
-              </span>
-              <span className="block text-xs sm:text-sm uppercase tracking-[0.3em] text-[#B76E79] font-semibold mt-2">
-                ESTUDIO DE CEJAS & MAQUILLAJE • POR ESLEN
-              </span>
+            {/* Prominent FORMA Official Seal + Typographic Header */}
+            <div className="mb-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5">
+              <FormaLogo size="xl" showWordmark={false} />
+              <div>
+                <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
+                  FORMA
+                </span>
+                <span className="block text-xs sm:text-sm uppercase tracking-[0.28em] text-[#B76E79] font-semibold mt-2">
+                  ESTUDIO &amp; COSMÉTICA • POR ESLEN
+                </span>
+              </div>
             </div>
 
             <h1 className="font-serif text-2xl sm:text-4xl lg:text-[42px] font-semibold text-[#2D2926] leading-[1.18] mt-4">
@@ -74,7 +108,7 @@ export const HeroSection: React.FC = () => {
               <span className="italic font-normal text-[#B76E79] underline decoration-[#F4C2C2] underline-offset-4">
                 Eslen
               </span>{' '}
-              & Maquillaje Seleccionado para tu Rutina.
+              &amp; Maquillaje Seleccionado para tu Rutina.
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-[#2D2926]/75 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
@@ -135,7 +169,7 @@ export const HeroSection: React.FC = () => {
                 {/* Floating Top Tag */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                   <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-xs font-semibold tracking-wider shadow-sm">
-                    ✨ ESTUDIO & TIENDA
+                    ✨ ESTUDIO &amp; COSMÉTICA
                   </span>
                   <span className="px-3 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-semibold shadow-sm">
                     Agenda Abierta
@@ -150,7 +184,7 @@ export const HeroSection: React.FC = () => {
                         ARQUITECTURA DE MIRADA • FORMA
                       </p>
                       <p className="font-serif text-lg font-bold text-[#2D2926]">
-                        Visagismo, Laminado de Cejas & Maquillaje
+                        Visagismo, Laminado de Cejas &amp; Maquillaje
                       </p>
                       <p className="text-xs text-[#2D2926]/70 mt-0.5">
                         Atención personalizada por Eslen en Ocaña, N. de S.
@@ -193,6 +227,67 @@ export const HeroSection: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* =========================================================
+          PREMIUM EDITORIAL TRANSITION BRIDGE (HERO -> SHOPPING)
+         ========================================================= */}
+      <div className="relative pt-4">
+        {/* Architectural Layered Silk Wave SVG */}
+        <div className="relative w-full overflow-hidden leading-none">
+          <svg
+            className="relative block w-full h-10 sm:h-16"
+            viewBox="0 0 1440 100"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,40 C320,95 620,0 960,50 C1200,85 1350,35 1440,20 L1440,100 L0,100 Z"
+              fill="#FDF2F4"
+              opacity="0.7"
+            />
+            <path
+              d="M0,65 C380,15 760,95 1120,40 C1280,15 1380,45 1440,60 L1440,100 L0,100 Z"
+              fill="#2D2926"
+            />
+            <path
+              d="M0,65 C380,15 760,95 1120,40 C1280,15 1380,45 1440,60"
+              fill="none"
+              stroke="#B76E79"
+              strokeWidth="2"
+            />
+          </svg>
+        </div>
+
+        {/* Luxury Rose-Gold & Charcoal Infinite Ribbon */}
+        <div className="bg-[#2D2926] py-3.5 border-b border-[#B76E79]/40 overflow-hidden relative">
+          <div className="animate-marquee flex items-center">
+            {[...marqueeItems, ...marqueeItems].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-center gap-6 mx-3 text-[11px] sm:text-xs font-semibold tracking-[0.24em] text-[#FAF7F5]/90 uppercase shrink-0"
+              >
+                <span>{item}</span>
+                <span className="text-[#E8A598] text-sm">✦</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Floating Central Transition Medallion into Store */}
+        <div className="bg-luxury-silk pt-7 pb-2 flex flex-col items-center justify-center relative">
+          <button
+            onClick={() => scrollTo('catalogo')}
+            className="group inline-flex flex-col items-center gap-1.5 focus:outline-none"
+            aria-label="Explorar colección FORMA"
+          >
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#B76E79]">
+              Colección Seleccionada por Eslen
+            </span>
+            <div className="w-9 h-9 rounded-full bg-white border border-[#E8A598] shadow-soft flex items-center justify-center text-[#B76E79] group-hover:bg-[#B76E79] group-hover:text-white transition-all">
+              <ChevronDown className="w-4 h-4 animate-bounce" />
+            </div>
+          </button>
         </div>
       </div>
     </section>

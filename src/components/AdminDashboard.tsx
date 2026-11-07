@@ -67,6 +67,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
     deleteProduct,
     updateSettings,
     syncAllToFirebase,
+    resetAllMetricsToZero,
   } = useStore();
 
   // Authentication state (Persist in localStorage & sessionStorage)
@@ -1567,6 +1568,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                 <Sparkles className="w-4 h-4 text-[#F4C2C2]" />
                 <span>Guardar y Sincronizar con Firebase Cloud</span>
               </button>
+
+              {/* Reset Metrics & Database to Zero for Clean Launch */}
+              <div className="pt-4 border-t border-[#F4C2C2]/60 space-y-2">
+                <p className="text-xs font-bold text-[#2D2926]">
+                   Producción Limpia (Iniciar Contadores desde 0)
+                </p>
+                <p className="text-[11px] text-[#2D2926]/65">
+                  Reinicia a <strong>0</strong> el contador de visitas, los clics de todos los
+                  productos (`clicks_count = 0`), los pedidos de prueba y las citas tanto en el
+                  navegador como en Firebase Firestore.
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await resetAllMetricsToZero();
+                    setFbSavedMsg(
+                      '✓ Contadores de clics, visitas, pedidos y citas reiniciados en 0 (Local + Firebase).'
+                    );
+                    setTimeout(() => setFbSavedMsg(''), 4000);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[#FDF2F4] hover:bg-[#F4C2C2]/60 text-[#B76E79] border border-[#E8A598] text-xs font-bold transition-colors"
+                >
+                  Reiniciar Clics, Visitas, Pedidos y Citas en 0
+                </button>
+              </div>
             </form>
           </div>
         )}
