@@ -16,7 +16,7 @@ import { useStore } from '../context/StoreContext';
 import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 export const HeroSection: React.FC = () => {
-  const { settings } = useStore();
+  const { settings, trackBookingRedirect } = useStore();
   const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   const scrollTo = (id: string) => {
@@ -92,6 +92,7 @@ export const HeroSection: React.FC = () => {
                     href={bookingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackBookingRedirect('Portada (Insignia Agenda Abierta)')}
                     className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2D2926]/90 backdrop-blur-md text-white border border-[#F4C2C2]/40 text-[11px] font-semibold shadow-sm hover:bg-[#B76E79] transition-colors"
                   >
                     <span className="w-2 h-2 rounded-full bg-[#6B9080] animate-ping" />
@@ -191,6 +192,7 @@ export const HeroSection: React.FC = () => {
                 href={bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackBookingRedirect('Botón Principal Portada (Agendar Cita)')}
                 className="animate-cta-loop inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#B76E79] via-[#9A5660] to-[#B76E79] text-white font-bold px-6 py-4 rounded-2xl text-sm sm:text-base border border-white/25"
               >
                 <Calendar className="w-5 h-5 shrink-0" />

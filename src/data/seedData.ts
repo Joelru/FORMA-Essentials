@@ -223,7 +223,9 @@ export const INITIAL_SETTINGS: StoreSettings = {
   nequiNumber: '3154829104',
   daviplataNumber: '3154829104',
   announcementText: '✨ Entregas rápidas en Ocaña • Pago Contra Entrega, Nequi o Daviplata',
-  bookingUrl: 'https://beautysitesbd.web.app/booking/framestudio'
+  bookingUrl: 'https://beautysitesbd.web.app/booking/framestudio',
+  ntfyTopic: 'forma-eslen-ocana-alertas',
+  notificationsEnabled: true
 };
 
 // Bases de datos vacías (en 0) para iniciar en producción limpia

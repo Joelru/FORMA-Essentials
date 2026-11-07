@@ -11,7 +11,8 @@ import {
   AppointmentTimeSlot,
   LegalTabType,
   CookiePreferences,
-  FlyAnimationItem
+  FlyAnimationItem,
+  BookingRedirectItem
 } from '../types';
 import {
   INITIAL_PRODUCTS,
@@ -21,11 +22,17 @@ import {
 } from '../data/seedData';
 import { getFirebaseDb, doc, setDoc, onSnapshot, getDoc } from '../lib/firebase';
 import { playNotificationChime } from '../utils/format';
+import {
+  notifyOwnerBookingRedirect,
+  notifyOwnerNewOrder,
+  showBrowserSystemNotification
+} from '../utils/notifications';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'forma_store_products_v3',
   ORDERS: 'forma_store_orders_v3',
   APPOINTMENTS: 'forma_store_appointments_v3',
+  BOOKING_REDIRECTS: 'forma_store_booking_redirects_v1',
   SETTINGS: 'forma_store_settings_v3',
   VISITS: 'forma_store_visits_v3',
   CART: 'forma_store_cart_v3',
@@ -58,6 +65,7 @@ interface StoreContextType {
   products: Product[];
   orders: Order[];
   appointments: Appointment[];
+  bookingRedirects: BookingRedirectItem[];
   settings: StoreSettings;
   visitsCount: number;
   cart: CartItem[];
@@ -69,8 +77,9 @@ interface StoreContextType {
   latestAlert: { type: 'order' | 'appointment'; title: string; subtitle: string } | null;
   dismissAlert: () => void;
 
-  // Product & Click Tracking
+  // Product & Click Tracking + Booking Redirect Tracking
   trackProductClick: (productId: string) => void;
+  trackBookingRedirect: (source: string) => void;
   openProductDetail: (product: Product) => void;
 
   // Cart Actions & Validations
@@ -146,6 +155,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [appointments, setAppointments] = useState<Appointment[]>(() =>
     loadFromStorage<Appointment[]>(STORAGE_KEYS.APPOINTMENTS, INITIAL_APPOINTMENTS)
   );
+  const [bookingRedirects, setBookingRedirects] = useState<BookingRedirectItem[]>(() =>
+    loadFromStorage<BookingRedirectItem[]>(STORAGE_KEYS.BOOKING_REDIRECTS, [])
+  );
   const [settings, setSettings] = useState<StoreSettings>(() =>
     loadFromStorage<StoreSettings>(STORAGE_KEYS.SETTINGS, INITIAL_SETTINGS)
   );
@@ -186,6 +198,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const isRemoteUpdate = useRef(false);
   const prevOrdersCount = useRef(orders.length);
+  const prevRedirectsCount = useRef(bookingRedirects.length);
 
   // Push state helper to Firestore
   const pushToFirestore = useCallback(
@@ -193,6 +206,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       products?: Product[];
       orders?: Order[];
       appointments?: Appointment[];
+      bookingRedirects?: BookingRedirectItem[];
       settings?: StoreSettings;
       visitsCount?: number;
     }) => {
@@ -281,6 +295,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           if (newOrders.length > prevOrdersCount.current) {
             const newest = newOrders[0];
             playNotificationChime();
+            showBrowserSystemNotification(
+              `¡Nueva Orden #${newest.id}!`,
+              `${newest.customerName} (${newest.neighborhood})`,
+              `${window.location.origin}/admin`
+            );
             setLatestAlert({
               type: 'order',
               title: `¡Nueva Orden #${newest.id}!`,
@@ -289,6 +308,23 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
           prevOrdersCount.current = newOrders.length;
           setOrders(newOrders);
+        } else if (e.key === STORAGE_KEYS.BOOKING_REDIRECTS) {
+          const newRedirects = JSON.parse(e.newValue) as BookingRedirectItem[];
+          if (newRedirects.length > prevRedirectsCount.current) {
+            const newest = newRedirects[0];
+            playNotificationChime();
+            showBrowserSystemNotification(
+              '📅 ¡Clienta yendo a Agendar Cita!',
+              `Clic desde: ${newest.source}`
+            );
+            setLatestAlert({
+              type: 'appointment',
+              title: '¡Clienta yendo a Agendar Cita!',
+              subtitle: `Origen: ${newest.source}`,
+            });
+          }
+          prevRedirectsCount.current = newRedirects.length;
+          setBookingRedirects(newRedirects);
         } else if (e.key === STORAGE_KEYS.APPOINTMENTS) {
           const newApps = JSON.parse(e.newValue) as Appointment[];
           setAppointments(newApps);
@@ -360,6 +396,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           if (data.orders.length > prevOrdersCount.current) {
             const newest = data.orders[0];
             playNotificationChime();
+            showBrowserSystemNotification(
+              `¡Nueva Orden #${newest.id}!`,
+              `${newest.customerName} (${newest.neighborhood})`,
+              `${window.location.origin}/admin`
+            );
             setLatestAlert({
               type: 'order',
               title: `¡Nueva Orden #${newest.id}!`,
@@ -369,6 +410,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           prevOrdersCount.current = data.orders.length;
           setOrders(data.orders);
           localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(data.orders));
+        }
+        if (Array.isArray(data.bookingRedirects)) {
+          if (data.bookingRedirects.length > prevRedirectsCount.current) {
+            const newest = data.bookingRedirects[0];
+            playNotificationChime();
+            showBrowserSystemNotification(
+              '📅 ¡Clienta yendo a Agendar Cita!',
+              `Clic desde: ${newest.source}`
+            );
+            setLatestAlert({
+              type: 'appointment',
+              title: '¡Clienta yendo a Agendar Cita!',
+              subtitle: `Origen: ${newest.source}`,
+            });
+          }
+          prevRedirectsCount.current = data.bookingRedirects.length;
+          setBookingRedirects(data.bookingRedirects);
+          localStorage.setItem(
+            STORAGE_KEYS.BOOKING_REDIRECTS,
+            JSON.stringify(data.bookingRedirects)
+          );
         }
         if (Array.isArray(data.appointments)) {
           setAppointments(data.appointments);
@@ -425,7 +487,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [products, orders, appointments, settings, visitsCount]);
 
-  // 1. Silent Click Tracking on Product ("Ver Detalles" or "Agregar al Carrito")
+  // 1. Silent Click Tracking on Product ("Ver Detalles" or "Agregar al Carrito") & Booking Redirect Tracking
   const trackProductClick = useCallback(
     (productId: string) => {
       setProducts((prev) => {
@@ -438,6 +500,28 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     },
     [pushToFirestore]
+  );
+
+  const trackBookingRedirect = useCallback(
+    (source: string) => {
+      const eventItem: BookingRedirectItem = {
+        id: `CITA-CLIC-${Date.now().toString().slice(-4)}`,
+        source,
+        createdAt: new Date().toISOString(),
+      };
+
+      setBookingRedirects((prev) => {
+        const updated = [eventItem, ...prev].slice(0, 100);
+        prevRedirectsCount.current = updated.length;
+        localStorage.setItem(STORAGE_KEYS.BOOKING_REDIRECTS, JSON.stringify(updated));
+        pushToFirestore({ bookingRedirects: updated });
+        return updated;
+      });
+
+      // Send instant push notification to Owner's Phone / ntfy channel
+      notifyOwnerBookingRedirect(source, settings);
+    },
+    [pushToFirestore, settings]
   );
 
   const openProductDetail = useCallback(
@@ -664,7 +748,13 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       // Sync with Firestore
       pushToFirestore({ orders: updatedOrders, products: updatedProducts });
 
-      // Trigger notification sound & alert banner
+      // Send instant push notification to Owner's Phone (ntfy.sh) + Browser Notification + Sound
+      notifyOwnerNewOrder(newOrder, settings);
+      showBrowserSystemNotification(
+        `¡Nueva Orden #${newOrder.id} Recibida!`,
+        `${newOrder.customerName} • ${newOrder.neighborhood}`,
+        `${window.location.origin}/admin`
+      );
       playNotificationChime();
       setLatestAlert({
         type: 'order',
@@ -675,7 +765,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearCart();
       return newOrder;
     },
-    [cart, cartTotal, orders, products, pushToFirestore, clearCart]
+    [cart, cartTotal, orders, products, settings, pushToFirestore, clearCart]
   );
 
   const updateOrderStatus = useCallback(
@@ -824,18 +914,22 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProducts(zeroedProducts);
     setOrders([]);
     setAppointments([]);
+    setBookingRedirects([]);
     setVisitsCount(0);
     prevOrdersCount.current = 0;
+    prevRedirectsCount.current = 0;
 
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(zeroedProducts));
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.BOOKING_REDIRECTS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(0));
 
     await pushToFirestore({
       products: zeroedProducts,
       orders: [],
       appointments: [],
+      bookingRedirects: [],
       visitsCount: 0,
     });
   }, [products, pushToFirestore]);
@@ -850,6 +944,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         products,
         orders,
         appointments,
+        bookingRedirects,
         settings,
         visitsCount,
         cart,
@@ -861,6 +956,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         latestAlert,
         dismissAlert,
         trackProductClick,
+        trackBookingRedirect,
         openProductDetail,
         addToCart,
         updateCartQuantity,

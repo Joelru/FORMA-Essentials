@@ -43,6 +43,11 @@ import {
 import { getSavedFirebaseConfig, saveFirebaseCustomConfig } from '../lib/firebase';
 import { FormaLogo } from './FormaLogo';
 import { EXTERNAL_BOOKING_URL } from './BookingSection';
+import {
+  DEFAULT_NTFY_TOPIC,
+  sendNtfyPush,
+  showBrowserSystemNotification
+} from '../utils/notifications';
 
 const ADMIN_SESSION_KEY = 'forma_admin_auth_session_v1';
 
@@ -54,6 +59,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   const {
     products,
     orders,
+    bookingRedirects,
     settings,
     visitsCount,
     firebaseStatus,
@@ -101,6 +107,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   // Store Settings Form State
   const [settingsForm, setSettingsForm] = useState(settings);
   const [settingsSavedMsg, setSettingsSavedMsg] = useState('');
+  const [testPushStatus, setTestPushStatus] = useState<string>('');
+  const [browserPermStatus, setBrowserPermStatus] = useState<string>(() =>
+    typeof window !== 'undefined' && 'Notification' in window
+      ? Notification.permission
+      : 'unsupported'
+  );
 
   // Firebase Custom Config Form State
   const existingFb = getSavedFirebaseConfig();
@@ -580,8 +592,156 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                   {totalClicksAllProducts} clics
                 </p>
                 <p className="text-[11px] text-[#2D2926]/60 mt-1">
-                  Clics en "Ver Detalles" y "Agregar"
+                  Clics en "Detalles" y "Comprar"
                 </p>
+              </div>
+            </div>
+
+            {/* Live Booking Redirects Tracker + Mobile Notification Quick Banner */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+              {/* Left: Real-time log of people clicking "Agendar Cita" */}
+              <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2] shadow-soft space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#FDF2F4] pb-3.5">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B9080]">
+                      Monitoreo de Citas en Tiempo Real
+                    </span>
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926]">
+                      Redirecciones a Plataforma de Citas ({bookingRedirects.length})
+                    </h3>
+                    <p className="text-xs text-[#2D2926]/65">
+                      Cada vez que una clienta pulsa "Agendar Cita", queda registrado aquí y te llega una alerta al celular.
+                    </p>
+                  </div>
+                  <a
+                    href={settings.bookingUrl || EXTERNAL_BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-2 rounded-xl bg-[#6B9080] hover:bg-[#57786a] text-white text-xs font-semibold transition-colors"
+                  >
+                    Abrir Agenda Externa ↗
+                  </a>
+                </div>
+
+                {bookingRedirects.length === 0 ? (
+                  <div className="py-6 text-center text-xs text-[#2D2926]/60 bg-[#FAF7F5] rounded-2xl border border-[#F4C2C2]/40">
+                    Aún no se han registrado clics hacia la plataforma de citas desde el último reinicio.
+                  </div>
+                ) : (
+                  <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
+                    {bookingRedirects.slice(0, 15).map((item, index) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between gap-3 p-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2]/50 text-xs"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="w-6 h-6 rounded-full bg-[#B76E79]/15 text-[#B76E79] font-bold text-[10px] flex items-center justify-center shrink-0">
+                            {index === 0 ? '★' : index + 1}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-[#2D2926] truncate">
+                              {item.source}
+                            </p>
+                            <p className="text-[10px] text-[#6B9080] font-medium">
+                              Redirigida a BeautySites (framestudio)
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-mono text-[#2D2926]/65 shrink-0">
+                          {new Date(item.createdAt).toLocaleString('es-CO', {
+                            day: '2-digit',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Mobile Push Notification Setup & Instant Test Card */}
+              <div className="lg:col-span-5 bg-gradient-to-br from-[#2D2926] to-[#3d3431] text-[#FAF7F5] rounded-3xl p-5 sm:p-6 border border-[#B76E79]/40 shadow-luxury flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#B76E79]/30 border border-[#F4C2C2]/40 text-[#F4C2C2] text-[10px] font-bold uppercase tracking-wider">
+                    <Bell className="w-3.5 h-3.5" />
+                    Alertas al Celular 24/7
+                  </div>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-white">
+                    Recibe avisos en tu celular al instante
+                  </h3>
+                  <p className="text-xs text-[#FAF7F5]/80 leading-relaxed">
+                    Entérate en el acto cuando alguien haga un <strong>pedido de productos</strong> o cuando alguien <strong>vaya a agendar cita</strong>:
+                  </p>
+                  <ol className="text-xs text-[#FAF7F5]/90 space-y-1.5 list-decimal pl-4 pt-1">
+                    <li>
+                      Descarga gratis la app <strong>ntfy</strong> en Play Store (Android) o App Store (iPhone).
+                    </li>
+                    <li>
+                      Pulsa el botón <strong>+</strong> y escribe tu código de canal:{' '}
+                      <code className="px-2 py-0.5 rounded bg-white/15 text-[#F4C2C2] font-mono font-bold select-all">
+                        {settings.ntfyTopic || DEFAULT_NTFY_TOPIC}
+                      </code>
+                    </li>
+                    <li>
+                      ¡Listo! Tu celular sonará automáticamente con cada pedido o clic a citas.
+                    </li>
+                  </ol>
+                </div>
+
+                <div className="space-y-2 pt-1">
+                  {testPushStatus && (
+                    <div className="p-2.5 rounded-xl bg-white/10 border border-[#F4C2C2]/40 text-[11px] text-[#F4C2C2] font-semibold text-center">
+                      {testPushStatus}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setTestPushStatus('Enviando notificación de prueba...');
+                      const ok = await sendNtfyPush({
+                        topic: settings.ntfyTopic || DEFAULT_NTFY_TOPIC,
+                        title: '✨ ¡Prueba Exitosa de FORMA!',
+                        message:
+                          'Las alertas de nuevos pedidos y redirecciones a citas están conectadas a tu celular.',
+                        priority: 5,
+                        tags: ['sparkles', 'white_check_mark'],
+                        clickUrl: `${window.location.origin}/admin`,
+                      });
+                      showBrowserSystemNotification(
+                        '✨ ¡Prueba Exitosa de FORMA!',
+                        'Las notificaciones están activas en este dispositivo.'
+                      );
+                      setTestPushStatus(
+                        ok
+                          ? `✓ ¡Alerta enviada al canal "${
+                              settings.ntfyTopic || DEFAULT_NTFY_TOPIC
+                            }"! Revisa tu app ntfy.`
+                          : 'No se pudo conectar con el servidor de notificaciones.'
+                      );
+                      setTimeout(() => setTestPushStatus(''), 5000);
+                    }}
+                    className="w-full py-3 px-4 rounded-xl bg-[#B76E79] hover:bg-[#9A5660] text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+                  >
+                    <Bell className="w-4 h-4" />
+                    <span>Probar Notificación a mi Celular Ahora</span>
+                  </button>
+
+                  {browserPermStatus !== 'granted' && browserPermStatus !== 'unsupported' && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const perm = await Notification.requestPermission();
+                        setBrowserPermStatus(perm);
+                      }}
+                      className="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors"
+                    >
+                      Activar también alertas en este navegador
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1351,6 +1511,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                   }
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs"
                 />
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-[#FDF2F4] border border-[#F4C2C2] space-y-2.5">
+                <label className="block text-xs font-bold text-[#B76E79]">
+                  🔔 Código de Canal de Alertas al Celular (App ntfy)
+                </label>
+                <input
+                  type="text"
+                  value={settingsForm.ntfyTopic || DEFAULT_NTFY_TOPIC}
+                  onChange={(e) =>
+                    setSettingsForm({
+                      ...settingsForm,
+                      ntfyTopic: e.target.value.replace(/[^a-zA-Z0-9_-]/g, '-'),
+                    })
+                  }
+                  placeholder="forma-eslen-ocana-alertas"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#F4C2C2] text-xs font-mono font-bold text-[#2D2926]"
+                />
+                <p className="text-[11px] text-[#2D2926]/70">
+                  Suscríbete a este código en la app gratuita <strong>ntfy</strong> (Android / iOS) para recibir notificaciones push instantáneas cada vez que pidan un producto o vayan a agendar cita.
+                </p>
               </div>
 
               <button

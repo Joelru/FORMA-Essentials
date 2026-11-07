@@ -108,6 +108,14 @@ export interface StoreSettings {
   daviplataNumber: string;
   announcementText: string;
   bookingUrl?: string;
+  ntfyTopic?: string;
+  notificationsEnabled?: boolean;
+}
+
+export interface BookingRedirectItem {
+  id: string;
+  source: string;
+  createdAt: string;
 }
 
 export interface FirebaseCustomConfig {

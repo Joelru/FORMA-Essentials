@@ -25,6 +25,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
     settings,
     latestAlert,
     dismissAlert,
+    trackBookingRedirect,
   } = useStore();
 
   const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
@@ -119,6 +120,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackBookingRedirect('Barra Superior (Agendar Cita)')}
               className="animate-nav-cta bg-[#FDF2F4] hover:bg-[#B76E79] text-[#9A5660] hover:text-white border border-[#B76E79]/60 px-4 py-2 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -202,6 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
               href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackBookingRedirect('Barra Móvil Inferior (Agendar Cita)')}
               className="animate-cta-loop flex flex-col items-center justify-center py-2 px-2 rounded-2xl bg-gradient-to-r from-[#B76E79] to-[#9A5660] text-white shadow-luxury"
             >
               <div className="flex items-center gap-1">

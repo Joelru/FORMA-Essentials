@@ -18,7 +18,7 @@ import { formatCOP } from '../utils/format';
 export const EXTERNAL_BOOKING_URL = 'https://beautysitesbd.web.app/booking/framestudio';
 
 export const BookingSection: React.FC = () => {
-  const { settings } = useStore();
+  const { settings, trackBookingRedirect } = useStore();
   const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   return (
@@ -108,6 +108,9 @@ export const BookingSection: React.FC = () => {
                     href={bookingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() =>
+                      trackBookingRedirect('Tarjeta Perfil Eslen (Agendar Cita)')
+                    }
                     className="animate-cta-loop w-full bg-gradient-to-r from-[#B76E79] via-[#9A5660] to-[#B76E79] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2.5 text-sm sm:text-base transition-all active:scale-95"
                   >
                     <Calendar className="w-4 h-4 shrink-0" />
@@ -141,6 +144,7 @@ export const BookingSection: React.FC = () => {
                 href={bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackBookingRedirect('Ver Disponibilidad en Agenda')}
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B76E79] hover:text-[#9A5660] underline underline-offset-4"
               >
                 <span>Ver disponibilidad en agenda</span>
@@ -198,6 +202,9 @@ export const BookingSection: React.FC = () => {
                         href={bookingUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() =>
+                          trackBookingRedirect(`Servicio: ${service.name}`)
+                        }
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2D2926] group-hover:bg-[#B76E79] text-white text-xs font-semibold transition-colors shadow-sm"
                       >
                         <span>Reservar</span>
@@ -234,6 +241,7 @@ export const BookingSection: React.FC = () => {
                 href={bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackBookingRedirect('Banner Inferior (Ir a Agendar Cita)')}
                 className="w-full sm:w-auto shrink-0 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-6 py-3.5 rounded-2xl shadow-luxury inline-flex items-center justify-center gap-2 text-xs sm:text-sm transition-all"
               >
                 <Sparkles className="w-4 h-4" />
