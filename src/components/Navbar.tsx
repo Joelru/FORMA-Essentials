@@ -5,10 +5,12 @@ import {
   Calendar,
   Instagram,
   MapPin,
-  Bell
+  Bell,
+  ExternalLink
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { FormaLogo } from './FormaLogo';
+import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 interface NavbarProps {
   activeView: 'store' | 'admin';
@@ -24,6 +26,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
     latestAlert,
     dismissAlert,
   } = useStore();
+
+  const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   const scrollToSection = (id: string) => {
     if (activeView !== 'store') {
@@ -108,25 +112,30 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
           {/* Left: Navigation Links (Desktop) */}
           <nav
             aria-label="Navegación principal"
-            className="hidden md:flex items-center gap-7 text-sm font-medium text-[#2D2926]/80"
+            className="hidden md:flex items-center gap-4 text-sm font-medium text-[#2D2926]/80"
           >
+            {/* Highlighted Animated Booking CTA in Header */}
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="animate-nav-cta bg-[#FDF2F4] hover:bg-[#B76E79] text-[#9A5660] hover:text-white border border-[#B76E79]/60 px-4 py-2 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Agendar Cita con Eslen</span>
+              <ExternalLink className="w-3 h-3 opacity-80" />
+            </a>
+
             <button
               onClick={() => scrollToSection('catalogo')}
-              className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5"
+              className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5 px-2 py-1.5"
             >
               <Sparkles className="w-4 h-4 text-[#B76E79]" />
-              Tienda de Maquillaje
-            </button>
-            <button
-              onClick={() => scrollToSection('citas-eslen')}
-              className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5"
-            >
-              <Calendar className="w-4 h-4 text-[#B76E79]" />
-              Agendar Cita con Eslen
+              <span>Tienda de Maquillaje</span>
             </button>
           </nav>
 
-          {/* Center: Prominent FORMA Brand Identity (Single Authoritative Brand Lockup) */}
+          {/* Center: Prominent FORMA Brand Identity */}
           <button
             onClick={() => {
               setActiveView('store');
@@ -154,12 +163,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
             <button
               data-cart-target="true"
               onClick={() => setIsCartOpen(true)}
-              className={`relative flex items-center gap-2 bg-[#B76E79] hover:bg-[#9A5660] text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium shadow-sm transition-all active:scale-95 ${
+              className={`relative flex items-center gap-2 bg-[#2D2926] hover:bg-[#B76E79] text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium shadow-sm transition-all active:scale-95 ${
                 isCartBumping ? 'animate-cart-bump ring-4 ring-[#F4C2C2]' : ''
               }`}
               aria-label="Abrir carrito de compras"
             >
-              <ShoppingBag className="w-4 h-4" />
+              <ShoppingBag className="w-4 h-4 text-[#F4C2C2]" />
               <span className="hidden sm:inline">Mi Bolsa</span>
               <span
                 className={`min-w-[20px] h-5 px-1 rounded-full bg-white text-[#2D2926] text-xs font-bold flex items-center justify-center transition-transform ${
@@ -173,33 +182,38 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
         </div>
       </header>
 
-      {/* Mobile-First Bottom Fixed Bar */}
+      {/* Mobile-First Bottom Fixed Bar with Highlighted Animated Center "Agendar Cita" CTA */}
       {activeView === 'store' && (
         <nav
           aria-label="Navegación móvil inferior"
-          className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F5]/95 backdrop-blur-lg border-t border-[#F4C2C2]/60 px-3 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(45,41,38,0.06)]"
+          className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#FAF7F5]/95 backdrop-blur-lg border-t border-[#F4C2C2]/60 px-3 pt-1.5 pb-[max(0.4rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(45,41,38,0.08)]"
         >
-          <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto">
+          <div className="grid grid-cols-3 gap-2 items-center max-w-sm mx-auto">
             <button
               onClick={() => scrollToSection('catalogo')}
-              className="flex flex-col items-center justify-center py-1.5 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors"
+              className="flex flex-col items-center justify-center py-1 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors"
             >
               <Sparkles className="w-5 h-5 text-[#B76E79]" />
               <span className="text-[11px] font-medium mt-0.5">Tienda</span>
             </button>
 
-            <button
-              onClick={() => scrollToSection('citas-eslen')}
-              className="flex flex-col items-center justify-center py-1.5 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors"
+            {/* Center Prominent Animated Booking Button on Mobile */}
+            <a
+              href={bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="animate-cta-loop flex flex-col items-center justify-center py-2 px-2 rounded-2xl bg-gradient-to-r from-[#B76E79] to-[#9A5660] text-white shadow-luxury"
             >
-              <Calendar className="w-5 h-5 text-[#B76E79]" />
-              <span className="text-[11px] font-medium mt-0.5">Citas Eslen</span>
-            </button>
+              <div className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                <span className="text-[11px] font-bold tracking-wide">Agendar Cita</span>
+              </div>
+            </a>
 
             <button
               data-cart-target="true"
               onClick={() => setIsCartOpen(true)}
-              className={`relative flex flex-col items-center justify-center py-1.5 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors ${
+              className={`relative flex flex-col items-center justify-center py-1 rounded-xl text-[#2D2926]/85 hover:text-[#B76E79] transition-colors ${
                 isCartBumping ? 'animate-cart-bump' : ''
               }`}
             >

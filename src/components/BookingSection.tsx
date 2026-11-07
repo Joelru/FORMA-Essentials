@@ -108,7 +108,7 @@ export const BookingSection: React.FC = () => {
                     href={bookingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold py-4 px-6 rounded-2xl shadow-luxury flex items-center justify-center gap-2.5 text-sm sm:text-base transition-all transform hover:-translate-y-0.5 active:scale-95"
+                    className="animate-cta-loop w-full bg-gradient-to-r from-[#B76E79] via-[#9A5660] to-[#B76E79] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2.5 text-sm sm:text-base transition-all active:scale-95"
                   >
                     <Calendar className="w-4 h-4 shrink-0" />
                     <span>Agendar Cita en Plataforma Oficial</span>
