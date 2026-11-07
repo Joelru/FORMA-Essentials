@@ -389,7 +389,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
               </span>
             </div>
             <p className="text-xs text-[#2D2926]/65 mt-1">
-              Monitoreo en tiempo real de visitas, clics de interés, pedidos de maquillaje y agenda de cejas en Ocaña.
+              Monitoreo en tiempo real de visitas, clics de interés, pedidos de productos y catálogo en Ocaña.
             </p>
           </div>
 

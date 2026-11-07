@@ -183,7 +183,7 @@ export const CartDrawer: React.FC = () => {
                       Tu bolsa está vacía
                     </h3>
                     <p className="text-xs sm:text-sm text-[#2D2926]/65 mt-1.5 max-w-xs mx-auto">
-                      Explora los geles fijadores, pomadas, sueros y kits de maquillaje de{' '}
+                      Explora los geles fijadores, sueros, pestañinas y esenciales de cuidado de{' '}
                       <strong>FORMA</strong>.
                     </p>
                     <button

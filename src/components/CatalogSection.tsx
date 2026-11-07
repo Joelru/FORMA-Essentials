@@ -76,7 +76,7 @@ export const CatalogSection: React.FC = () => {
   return (
     <section
       id="catalogo"
-      aria-label="Catálogo de Maquillaje y Cuidado de Cejas FORMA"
+      aria-label="Catálogo de Cuidado de Cejas, Pestañas y Rostro FORMA"
       className="relative py-10 sm:py-16 bg-luxury-silk overflow-hidden"
     >
       {/* Subtle Architectural Luxury Frame Accent */}
@@ -89,10 +89,10 @@ export const CatalogSection: React.FC = () => {
             Catálogo Oficial • FORMA
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2926]">
-            Maquillaje &amp; Cuidado de Cejas
+            Cuidado de Cejas, Pestañas &amp; Rostro
           </h2>
           <p className="mt-2 text-sm sm:text-base text-[#2D2926]/70">
-            Seleccionados por Eslen para lograr fijación, pigmentación limpia y cuidado real todos los días.
+            Esenciales seleccionados por Eslen para fijación, nutrición capilar y cuidado facial todos los días.
           </p>
         </div>
 
@@ -105,8 +105,8 @@ export const CatalogSection: React.FC = () => {
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar por nombre o categoría (ej. Gel fijador, pomada, suero, kit...)"
-              aria-label="Buscar productos de maquillaje y cejas"
+              placeholder="Buscar por nombre o categoría (ej. Gel fijador, suero, pestañina, rostro, kit...)"
+              aria-label="Buscar productos de cuidado de cejas, pestañas y rostro"
               className="w-full pl-11 pr-10 py-3.5 rounded-2xl bg-white border border-[#F4C2C2] text-base sm:text-sm text-[#2D2926] placeholder:text-[#2D2926]/45 focus:outline-none focus:border-[#B76E79] focus:ring-2 focus:ring-[#F4C2C2]/50 shadow-sm transition-all"
             />
             {searchQuery && (

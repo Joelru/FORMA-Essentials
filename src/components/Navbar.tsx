@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
               className="hover:text-[#B76E79] transition-colors flex items-center gap-1.5 px-2 py-1.5"
             >
               <Sparkles className="w-4 h-4 text-[#B76E79]" />
-              <span>Tienda de Maquillaje</span>
+              <span>Catálogo de Productos</span>
             </button>
           </nav>
 

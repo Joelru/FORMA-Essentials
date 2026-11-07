@@ -158,10 +158,10 @@ export const LegalModal: React.FC = () => {
 
               <div className="bg-white rounded-2xl p-4 border border-[#F4C2C2]/70 space-y-2">
                 <h3 className="font-serif text-lg font-bold text-[#2D2926]">
-                  4. Garantías e Higiene en Productos Cosméticos
+                  4. Garantías e Higiene en Productos de Cuidado Personal
                 </h3>
                 <p>
-                  Por razones de bioseguridad e higiene dermatológica (Art. 47 num. 7 de la Ley 1480 de 2011 sobre bienes de uso personal), los productos cosméticos y de maquillaje <strong>no tienen cambio ni devolución una vez abiertos, destapados o rotos sus sellos de seguridad</strong>, salvo por defectos de calidad o idoneidad verificables al momento de la entrega.
+                  Por razones de bioseguridad e higiene dermatológica (Art. 47 num. 7 de la Ley 1480 de 2011 sobre bienes de uso personal), los productos cosméticos y de cuidado facial/capilar <strong>no tienen cambio ni devolución una vez abiertos, destapados o rotos sus sellos de seguridad</strong>, salvo por defectos de calidad o idoneidad verificables al momento de la entrega.
                 </p>
               </div>
 

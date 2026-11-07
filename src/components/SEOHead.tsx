@@ -19,12 +19,12 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
       document.title = `${selectedProductModal.name} | FORMA por Eslen — Ocaña`;
     } else {
       document.title =
-        'FORMA — Estudio de Cejas & Tienda de Maquillaje por Eslen | Ocaña, N. de S.';
+        'FORMA — Estudio de Cejas & Cuidado Facial por Eslen | Ocaña, N. de S.';
     }
 
     const descriptionText = selectedProductModal
       ? `${selectedProductModal.name} en Ocaña ($${selectedProductModal.price.toLocaleString('es-CO')} COP). ${selectedProductModal.description} Entrega rápida en Ocaña, pago contra entrega, Nequi o Daviplata.`
-      : 'FORMA Estudio & Cosmética por Eslen en Ocaña, Norte de Santander. Diseño profesional de cejas, visagismo, laminado (Brow Lamination) y tienda de maquillaje 100% original con domicilio rápido y pago contra entrega.';
+      : 'FORMA Estudio & Cosmética por Eslen en Ocaña, Norte de Santander. Diseño profesional de cejas, visagismo, laminado (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro con domicilio rápido.';
 
     const setMeta = (selector: string, attr: string, content: string) => {
       let el = document.querySelector<HTMLMetaElement>(selector);
@@ -83,7 +83,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           name: 'FORMA — Estudio & Cosmética por Eslen',
           alternateName: ['FORMA Estudio y Cosmética', 'FORMA por Eslen Ocaña', 'FORMA Essentials'],
           description:
-            'Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado de cejas (Brow Lamination) y boutique de maquillaje 100% original en Ocaña, Norte de Santander.',
+            'Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado de cejas (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro en Ocaña, Norte de Santander.',
           url: `${baseUrl}/`,
           logo: `${baseUrl}/forma-logo.png`,
           image: [
@@ -147,7 +147,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           },
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
-            name: 'Servicios de Diseño de Cejas y Catálogo de Maquillaje FORMA',
+            name: 'Servicios de Diseño de Cejas y Catálogo de Cuidado FORMA',
             itemListElement: BROW_SERVICES.map((srv) => ({
               '@type': 'Offer',
               itemOffered: {
@@ -177,7 +177,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
         {
           '@type': 'ItemList',
           '@id': `${baseUrl}/#catalog`,
-          name: 'Catálogo Oficial de Maquillaje y Cuidado de Cejas FORMA Ocaña',
+          name: 'Catálogo Oficial de Cuidado de Cejas, Pestañas y Rostro FORMA Ocaña',
           numberOfItems: activeProducts.length,
           itemListElement: activeProducts.map((product, index) => ({
             '@type': 'ListItem',
@@ -227,7 +227,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
             },
             {
               '@type': 'Question',
-              name: '¿Tienen domicilios de maquillaje y pago contra entrega en Ocaña?',
+              name: '¿Tienen domicilios de productos de cuidado de cejas y rostro con pago contra entrega en Ocaña?',
               acceptedAnswer: {
                 '@type': 'Answer',
                 text: 'Sí, FORMA realiza despachos rápidos el mismo día en todos los barrios del casco urbano de Ocaña, Norte de Santander. Aceptamos Pago Contra Entrega en efectivo, Nequi y Daviplata.',

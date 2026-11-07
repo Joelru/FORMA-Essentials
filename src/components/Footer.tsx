@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
             <FormaLogo size="md" variant="light" showWordmark={true} showSubtitle={true} />
             <p className="text-xs sm:text-sm text-[#FAF7F5]/75 leading-relaxed max-w-md pt-1">
               Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado
-              profesional (Brow Lamination) y boutique de maquillaje 100% original seleccionado por{' '}
+              profesional (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro seleccionados por{' '}
               <strong>{settings.ownerName}</strong> con entregas rápidas en Ocaña, Norte de Santander.
             </p>
             <address className="not-italic pt-1 flex items-center gap-2 text-xs text-[#F4C2C2]">
@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2.5 text-xs sm:text-sm text-[#FAF7F5]/80">
               <li>
                 <a href="#catalogo" className="hover:text-[#F4C2C2] transition-colors">
-                  Catálogo de Maquillaje &amp; Cejas
+                  Catálogo de Cuidado &amp; Cejas
                 </a>
               </li>
               <li>

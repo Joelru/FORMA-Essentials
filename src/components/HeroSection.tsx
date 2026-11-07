@@ -49,7 +49,7 @@ export const HeroSection: React.FC = () => {
   const marqueeItems = [
     'DISEÑO ARQUITECTÓNICO DE CEJAS POR ESLEN',
     'AGENDA TU CITA ONLINE EN SEGUNDOS',
-    'BOUTIQUE DE MAQUILLAJE 100% ORIGINAL',
+    'CUIDADO DE CEJAS, PESTAÑAS & ROSTRO',
     'VISAGISMO ÁUREO & BROW LAMINATION',
     'ENTREGAS RÁPIDAS EN OCAÑA',
   ];
@@ -178,11 +178,11 @@ export const HeroSection: React.FC = () => {
               <span className="italic font-normal text-[#B76E79] underline decoration-[#F4C2C2] underline-offset-4">
                 Eslen
               </span>{' '}
-              &amp; Maquillaje Esencial.
+              &amp; Cuidado Esencial.
             </h1>
 
             <p className="text-xs sm:text-sm text-[#2D2926]/75 max-w-md mx-auto lg:mx-0 leading-relaxed">
-              Reserva tu cita en cabina en segundos o recibe hoy mismo en Ocaña los productos originales que Eslen recomienda.
+              Reserva tu cita de cejas en segundos o recibe hoy mismo en Ocaña los productos de cuidado para cejas, pestañas y rostro que Eslen recomienda.
             </p>
 
             {/* Primary CTAs — "Agendar Cita" is #1 with Continuous Subtle Loop Animation */}
@@ -204,7 +204,7 @@ export const HeroSection: React.FC = () => {
                 className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#FDF2F4] text-[#2D2926] font-semibold px-6 py-3.5 sm:py-4 rounded-2xl border-2 border-[#E8A598] shadow-sm transition-all active:scale-95 text-sm sm:text-base"
               >
                 <Sparkles className="w-4 h-4 text-[#B76E79]" />
-                <span>Tienda de Maquillaje</span>
+                <span>Ver Productos de Cuidado</span>
                 <ArrowRight className="w-4 h-4 text-[#B76E79]" />
               </button>
             </div>
@@ -304,7 +304,7 @@ export const HeroSection: React.FC = () => {
           <button
             onClick={() => scrollTo('catalogo')}
             className="group inline-flex flex-col items-center gap-1 focus:outline-none"
-            aria-label="Explorar colección de maquillaje FORMA"
+            aria-label="Explorar catálogo de productos FORMA"
           >
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#B76E79]">
               Catálogo Seleccionado por Eslen
