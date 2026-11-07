@@ -309,11 +309,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
     return (
       <div className="min-h-[82vh] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-[#FDF2F4] to-[#FAF7F5]">
         <div className="w-full max-w-md bg-white rounded-3xl border border-[#F4C2C2] shadow-luxury p-7 sm:p-9 text-center">
-          <div className="flex justify-center mb-4">
-            <FormaLogo size="lg" showWordmark={false} />
+          <div className="flex justify-center mb-3">
+            <FormaLogo size="lg" showWordmark={true} />
           </div>
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#B76E79]">
-            FORMA • STUDIO ADMIN
+            ACCESO EXCLUSIVO • ESLEN
           </span>
           <h1 className="font-serif text-3xl font-bold text-[#2D2926] mt-1">
             Panel de Administración

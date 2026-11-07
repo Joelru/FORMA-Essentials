@@ -26,6 +26,13 @@ export const App: React.FC = () => {
   );
 
   useEffect(() => {
+    document.title =
+      activeView === 'admin'
+        ? 'FORMA | Panel de Administración'
+        : 'FORMA — Diseño de Cejas & Maquillaje por Eslen | Ocaña';
+  }, [activeView]);
+
+  useEffect(() => {
     const syncViewFromUrl = () => {
       setActiveView(checkIsAdminUrl() ? 'admin' : 'store');
     };

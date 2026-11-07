@@ -11,7 +11,6 @@ import {
   MapPin
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { FormaLogo } from './FormaLogo';
 
 export const HeroSection: React.FC = () => {
   const { settings } = useStore();
@@ -45,13 +44,13 @@ export const HeroSection: React.FC = () => {
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 pb-12 sm:py-16 border-b border-[#F4C2C2]/40">
-      {/* Subtle Luxury Ambient Circles */}
+      {/* Subtle Ambient Circles */}
       <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#F4C2C2]/25 blur-3xl" />
       <div className="pointer-events-none absolute top-40 -left-24 w-80 h-80 rounded-full bg-[#E8A598]/20 blur-3xl" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Full Brand Presence & Value Proposition */}
+          {/* Left Column: Full Brand Presence & Value Proposition (Without Graphic Logo) */}
           <div className="lg:col-span-7 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#F4C2C2] shadow-sm mb-5">
               <Sparkles className="w-3.5 h-3.5 text-[#B76E79]" />
@@ -60,17 +59,14 @@ export const HeroSection: React.FC = () => {
               </span>
             </div>
 
-            {/* Prominent FORMA Emblem + Brand Block */}
-            <div className="mb-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <FormaLogo size="xl" showWordmark={false} />
-              <div>
-                <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
-                  FORMA
-                </span>
-                <span className="block text-xs sm:text-sm uppercase tracking-[0.3em] text-[#B76E79] font-semibold mt-2">
-                  LUXURY BEAUTY STUDIO • BY ESLEN
-                </span>
-              </div>
+            {/* Prominent FORMA Typographic Brand Block */}
+            <div className="mb-3">
+              <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
+                FORMA
+              </span>
+              <span className="block text-xs sm:text-sm uppercase tracking-[0.3em] text-[#B76E79] font-semibold mt-2">
+                ESTUDIO DE CEJAS & MAQUILLAJE • POR ESLEN
+              </span>
             </div>
 
             <h1 className="font-serif text-2xl sm:text-4xl lg:text-[42px] font-semibold text-[#2D2926] leading-[1.18] mt-4">
@@ -83,7 +79,7 @@ export const HeroSection: React.FC = () => {
 
             <p className="mt-4 text-sm sm:text-base text-[#2D2926]/75 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
               Bienvenida a <strong className="text-[#2D2926] font-semibold">FORMA</strong>.
-              Un espacio de estética <span className="italic">Clean Girl</span> en Ocaña donde la arquitectura
+              Un espacio dedicado a realzar tu belleza natural en Ocaña donde la arquitectura
               de tu mirada se une con los productos de maquillaje, fijación e hidratación que Eslen utiliza y recomienda en su estudio.
             </p>
 
@@ -131,7 +127,7 @@ export const HeroSection: React.FC = () => {
               <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-luxury bg-[#FDF2F4] aspect-[4/4.3]">
                 <img
                   src="/hero-brows.jpg"
-                  alt="FORMA por Eslen - Diseño Profesional de Cejas y Brow Lamination"
+                  alt="FORMA por Eslen - Diseño Profesional de Cejas y Laminado"
                   className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/80 via-[#2D2926]/10 to-transparent" />
@@ -139,7 +135,7 @@ export const HeroSection: React.FC = () => {
                 {/* Floating Top Tag */}
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
                   <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-xs font-semibold tracking-wider shadow-sm">
-                    ✨ ESTUDIO & BOUTIQUE
+                    ✨ ESTUDIO & TIENDA
                   </span>
                   <span className="px-3 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-semibold shadow-sm">
                     Agenda Abierta
@@ -154,7 +150,7 @@ export const HeroSection: React.FC = () => {
                         ARQUITECTURA DE MIRADA • FORMA
                       </p>
                       <p className="font-serif text-lg font-bold text-[#2D2926]">
-                        Visagismo, Brow Lamination & Maquillaje
+                        Visagismo, Laminado de Cejas & Maquillaje
                       </p>
                       <p className="text-xs text-[#2D2926]/70 mt-0.5">
                         Atención personalizada por Eslen en Ocaña, N. de S.
