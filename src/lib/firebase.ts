@@ -1,4 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { getAnalytics, isSupported } from 'firebase/analytics';
 import {
   getFirestore,
   Firestore,
@@ -11,34 +12,30 @@ import { FirebaseCustomConfig } from '../types';
 
 const FIREBASE_CONFIG_STORAGE_KEY = 'forma_firebase_custom_config_v1';
 
-export function getSavedFirebaseConfig(): FirebaseCustomConfig | null {
-  // 1. Check .env variables first
-  const envApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-  const envProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+// Configuración oficial por defecto de FORMA Estudio (Firebase)
+export const DEFAULT_FIREBASE_CONFIG: FirebaseCustomConfig & { measurementId?: string } = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyB0w6V1ew8XILLiq55PVqtnIN4bzY-AETU',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'forma-estudio.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'forma-estudio',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'forma-estudio.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '739266642946',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:739266642946:web:4762fd6e7568e2b250531b',
+  measurementId: 'G-3XRWNKVQP2',
+};
 
-  if (envApiKey && envProjectId) {
-    return {
-      apiKey: envApiKey,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || `${envProjectId}.firebaseapp.com`,
-      projectId: envProjectId,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || `${envProjectId}.appspot.com`,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-      appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
-    };
-  }
-
-  // 2. Check custom config saved via Admin Dashboard
+export function getSavedFirebaseConfig(): FirebaseCustomConfig {
   try {
     const raw = localStorage.getItem(FIREBASE_CONFIG_STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as FirebaseCustomConfig;
-    if (parsed && parsed.apiKey && parsed.projectId) {
-      return parsed;
+    if (raw) {
+      const parsed = JSON.parse(raw) as FirebaseCustomConfig;
+      if (parsed && parsed.apiKey && parsed.projectId) {
+        return parsed;
+      }
     }
   } catch {
-    return null;
+    // Fallback to default config
   }
-  return null;
+  return DEFAULT_FIREBASE_CONFIG;
 }
 
 export function saveFirebaseCustomConfig(config: FirebaseCustomConfig | null): void {
@@ -50,6 +47,7 @@ export function saveFirebaseCustomConfig(config: FirebaseCustomConfig | null): v
 }
 
 let cachedDb: Firestore | null = null;
+let analyticsInitialized = false;
 
 export function getFirebaseDb(): { db: Firestore | null; isConnected: boolean; projectId?: string } {
   const config = getSavedFirebaseConfig();
@@ -65,6 +63,16 @@ export function getFirebaseDb(): { db: Firestore | null; isConnected: boolean; p
     } else {
       app = initializeApp(config);
     }
+
+    if (!analyticsInitialized && typeof window !== 'undefined') {
+      analyticsInitialized = true;
+      isSupported()
+        .then((yes) => {
+          if (yes) getAnalytics(app);
+        })
+        .catch(() => {});
+    }
+
     if (!cachedDb) {
       cachedDb = getFirestore(app);
     }

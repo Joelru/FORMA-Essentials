@@ -181,19 +181,22 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     []
   );
 
-  // Session Visit Counter (once per browser session)
+  // Session Visit Counter (once per browser session, cloud-safe)
   useEffect(() => {
+    const { isConnected } = getFirebaseDb();
+    // If Firebase is connected, we increment inside the initial getDoc() below so we never overwrite cloud visitsCount with local 0
+    if (isConnected) return;
+
     const alreadyVisited = sessionStorage.getItem(STORAGE_KEYS.SESSION_VISITED);
     if (!alreadyVisited) {
       sessionStorage.setItem(STORAGE_KEYS.SESSION_VISITED, 'true');
       setVisitsCount((prev) => {
         const next = prev + 1;
         localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(next));
-        pushToFirestore({ visitsCount: next });
         return next;
       });
     }
-  }, [pushToFirestore]);
+  }, []);
 
   // Save cart to localStorage
   useEffect(() => {
@@ -246,18 +249,32 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const storeDocRef = doc(db, 'forma_essentials', 'live_store_data');
 
-    // Initial check: if Firestore doc doesn't exist yet, seed it with current local state
+    // Initial check: if Firestore doc doesn't exist yet, seed it; if it exists, increment session visit safely on cloud value
     getDoc(storeDocRef)
       .then((snap) => {
+        const alreadyVisited = sessionStorage.getItem(STORAGE_KEYS.SESSION_VISITED);
         if (!snap.exists()) {
+          const initialVisits = alreadyVisited ? visitsCount : 1;
+          sessionStorage.setItem(STORAGE_KEYS.SESSION_VISITED, 'true');
           setDoc(storeDocRef, {
             products,
             orders,
             appointments,
             settings,
-            visitsCount,
+            visitsCount: initialVisits,
             updatedAt: new Date().toISOString(),
           });
+        } else if (!alreadyVisited) {
+          sessionStorage.setItem(STORAGE_KEYS.SESSION_VISITED, 'true');
+          const cloudVisits = typeof snap.data()?.visitsCount === 'number' ? snap.data().visitsCount : 0;
+          const nextVisits = cloudVisits + 1;
+          setVisitsCount(nextVisits);
+          localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(nextVisits));
+          setDoc(
+            storeDocRef,
+            { visitsCount: nextVisits, updatedAt: new Date().toISOString() },
+            { merge: true }
+          );
         }
       })
       .catch(() => {});
