@@ -43,6 +43,7 @@ import {
   buildAppointmentWhatsAppUrl
 } from '../utils/format';
 import { getSavedFirebaseConfig, saveFirebaseCustomConfig } from '../lib/firebase';
+import { FormaLogo } from './FormaLogo';
 
 const ADMIN_SESSION_KEY = 'forma_admin_auth_session_v1';
 
@@ -270,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
           prodUsageTip.trim() ||
           'Aplicar sobre la piel o cejas limpias siguiendo tu rutina FORMA.',
       });
-      setProductSavedMsg('✓ Nuevo producto publicado inmediatamente en FORMA Essentials.');
+      setProductSavedMsg('✓ Nuevo producto publicado inmediatamente en FORMA.');
     }
 
     resetProductForm();
@@ -281,7 +282,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
     e.preventDefault();
     updateSettings(settingsForm);
     setSettingsSavedMsg(
-      '✓ Redes sociales y datos de FORMA Essentials actualizados en toda la tienda.'
+      '✓ Redes sociales y datos de FORMA actualizados en toda la tienda.'
     );
     setTimeout(() => setSettingsSavedMsg(''), 3500);
   };
@@ -308,11 +309,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
     return (
       <div className="min-h-[82vh] flex items-center justify-center px-4 py-12 bg-gradient-to-b from-[#FDF2F4] to-[#FAF7F5]">
         <div className="w-full max-w-md bg-white rounded-3xl border border-[#F4C2C2] shadow-luxury p-7 sm:p-9 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-[#FDF2F4] border border-[#F4C2C2] flex items-center justify-center mx-auto mb-4 text-[#B76E79]">
-            <Lock className="w-8 h-8" />
+          <div className="flex justify-center mb-4">
+            <FormaLogo size="lg" showWordmark={false} />
           </div>
           <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#B76E79]">
-            FORMA ESSENTIALS • STUDIO ADMIN
+            FORMA • STUDIO ADMIN
           </span>
           <h1 className="font-serif text-3xl font-bold text-[#2D2926] mt-1">
             Panel de Administración
@@ -376,10 +377,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
         {/* Top Admin Header Bar */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2] shadow-soft flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-[0.15em] text-[#2D2926]">
-                FORMA
-              </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <FormaLogo size="sm" showWordmark={true} />
               <span className="px-2.5 py-0.5 rounded-full bg-[#FDF2F4] text-[#B76E79] border border-[#F4C2C2] text-xs font-bold">
                 Panel Administrativo • Eslen
               </span>
@@ -1490,7 +1489,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
               </div>
 
               <p className="text-xs text-[#2D2926]/70 leading-relaxed">
-                FORMA Essentials cuenta con persistencia híbrida: guarda todo al instante en{' '}
+                FORMA cuenta con persistencia híbrida: guarda todo al instante en{' '}
                 <code>localStorage</code> (con sincronización entre pestañas) y se conecta en
                 tiempo real a <strong>Firebase Cloud Firestore</strong> mediante variables{' '}
                 <code>.env</code> o ingresando tus credenciales aquí:

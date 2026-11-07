@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StoreProvider } from './context/StoreContext';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
@@ -9,35 +9,43 @@ import { CartDrawer } from './components/CartDrawer';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Footer } from './components/Footer';
 
+function checkIsAdminUrl(): boolean {
+  const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+  const hash = window.location.hash.toLowerCase();
+  return (
+    path === '/admin' ||
+    path.endsWith('/admin') ||
+    hash === '#admin' ||
+    hash === '#/admin'
+  );
+}
+
 export const App: React.FC = () => {
-  const [activeView, setActiveView] = useState<'store' | 'admin'>(() => {
-    const path = window.location.pathname.toLowerCase();
-    const hash = window.location.hash.toLowerCase();
-    if (path.endsWith('/admin') || hash === '#admin') {
-      return 'admin';
-    }
-    return 'store';
-  });
+  const [activeView, setActiveView] = useState<'store' | 'admin'>(() =>
+    checkIsAdminUrl() ? 'admin' : 'store'
+  );
 
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash.toLowerCase() === '#admin') {
-        setActiveView('admin');
-      }
+    const syncViewFromUrl = () => {
+      setActiveView(checkIsAdminUrl() ? 'admin' : 'store');
     };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', syncViewFromUrl);
+    window.addEventListener('hashchange', syncViewFromUrl);
+    return () => {
+      window.removeEventListener('popstate', syncViewFromUrl);
+      window.removeEventListener('hashchange', syncViewFromUrl);
+    };
   }, []);
 
-  const handleSetView = (view: 'store' | 'admin') => {
+  const handleSetView = useCallback((view: 'store' | 'admin') => {
     setActiveView(view);
     if (view === 'admin') {
-      window.history.replaceState(null, '', '#admin');
+      window.history.pushState(null, '', '/admin');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      window.history.replaceState(null, '', window.location.pathname);
+      window.history.pushState(null, '', '/');
     }
-  };
+  }, []);
 
   return (
     <StoreProvider>
@@ -56,7 +64,7 @@ export const App: React.FC = () => {
           </main>
         )}
 
-        <Footer onOpenAdmin={() => handleSetView('admin')} />
+        <Footer />
 
         {/* Interactive Modals & Drawers */}
         <ProductDetailModal />

@@ -144,7 +144,7 @@ export const CartDrawer: React.FC = () => {
                     </h3>
                     <p className="text-xs sm:text-sm text-[#2D2926]/65 mt-1.5 max-w-xs mx-auto">
                       Explora los geles fijadores, pomadas, kits y esenciales de maquillaje de{' '}
-                      <strong>FORMA Essentials</strong>.
+                      <strong>FORMA</strong>.
                     </p>
                     <button
                       onClick={handleClose}
@@ -505,7 +505,7 @@ export const CartDrawer: React.FC = () => {
                 href={`https://wa.me/57${cleanPhone(
                   settings.whatsappNumber
                 )}?text=${encodeURIComponent(
-                  `¡Hola Eslen! Acabo de realizar el pedido #${confirmedOrder.id} en FORMA Essentials por valor de ${formatCOP(
+                  `¡Hola Eslen! Acabo de realizar el pedido #${confirmedOrder.id} en FORMA por valor de ${formatCOP(
                     confirmedOrder.total
                   )} a nombre de ${confirmedOrder.customerName} (${confirmedOrder.neighborhood}).`
                 )}`}
@@ -521,7 +521,7 @@ export const CartDrawer: React.FC = () => {
                 onClick={handleClose}
                 className="w-full py-3 rounded-xl border border-[#F4C2C2] text-xs font-semibold text-[#2D2926] hover:bg-[#FDF2F4] transition-colors"
               >
-                Seguir explorando FORMA Essentials
+                Seguir explorando FORMA
               </button>
             </div>
           )}

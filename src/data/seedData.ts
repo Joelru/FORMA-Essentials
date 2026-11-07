@@ -75,7 +75,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 'prod-forma-03',
-    name: 'Kit de Diseño y Sombreado FORMA Signature',
+    name: 'Kit de Diseño y Sombreado FORMA',
     category: 'Kits Recomendados por Eslen',
     price: 89000,
     stock: 9,
@@ -91,7 +91,7 @@ export const INITIAL_PRODUCTS: Product[] = [
       'Ahorras un 20% frente a comprar los productos por separado'
     ],
     usageTip:
-      'Usa el tono más claro en el primer centímetro del inicio de la ceja y el tono más profundo desde el arco hasta la punta para lograr el icónico efecto Ombré de FORMA Studio.',
+      'Usa el tono más claro en el primer centímetro del inicio de la ceja y el tono más profundo desde el arco hasta la punta para lograr el icónico efecto Ombré de FORMA.',
     clicks_count: 54,
     createdAt: '2026-10-18T14:20:00.000Z'
   },
@@ -222,7 +222,7 @@ export const BROW_SERVICES: BrowService[] = [
   },
   {
     id: 'srv-05',
-    name: 'Experiencia FORMA Luxury (Laminado + Diseño + Sombreado)',
+    name: 'Experiencia FORMA (Laminado + Diseño + Sombreado)',
     duration: '75 min',
     price: 78000,
     tag: 'VIP Studio',
@@ -233,18 +233,18 @@ export const BROW_SERVICES: BrowService[] = [
 
 export const INITIAL_SETTINGS: StoreSettings = {
   brandName: 'FORMA',
-  brandSubtitle: 'ESSENTIALS • STUDIO BY ESLEN',
+  brandSubtitle: 'POR ESLEN • OCAÑA',
   ownerName: 'Eslen',
   city: 'Ocaña, Norte de Santander',
-  studioAddress: 'Estudio FORMA — Ocaña, Norte de Santander (Atención con Cita Previa & Despachos el mismo día)',
-  instagramUrl: 'https://instagram.com/forma.essentials',
-  instagramHandle: '@forma.essentials',
-  tiktokUrl: 'https://tiktok.com/@forma.essentials',
-  tiktokHandle: '@forma.essentials',
+  studioAddress: 'Estudio FORMA — Ocaña, Norte de Santander',
+  instagramUrl: 'https://instagram.com/forma.estudio',
+  instagramHandle: '@forma.estudio',
+  tiktokUrl: 'https://tiktok.com/@forma.estudio',
+  tiktokHandle: '@forma.estudio',
   whatsappNumber: '3154829104',
   nequiNumber: '3154829104',
   daviplataNumber: '3154829104',
-  announcementText: '✨ Envíos rápidos en Ocaña • Pago Contra Entrega, Nequi o Daviplata • Agenda tu cita de cejas con Eslen'
+  announcementText: '✨ Entregas rápidas en Ocaña • Pago Contra Entrega, Nequi o Daviplata'
 };
 
 export const INITIAL_ORDERS: Order[] = [
@@ -288,7 +288,7 @@ export const INITIAL_ORDERS: Order[] = [
     items: [
       {
         productId: 'prod-forma-03',
-        name: 'Kit de Diseño y Sombreado FORMA Signature',
+        name: 'Kit de Diseño y Sombreado FORMA',
         price: 89000,
         quantity: 1,
         image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=85'

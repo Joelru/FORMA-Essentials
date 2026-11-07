@@ -266,7 +266,7 @@ export const BookingSection: React.FC = () => {
                     href={`https://wa.me/57${cleanPhone(
                       settings.whatsappNumber
                     )}?text=${encodeURIComponent(
-                      `¡Hola Eslen! ✨ Acabo de solicitar una cita en FORMA Essentials (#${submittedAppointment.id}) para *${submittedAppointment.serviceName}* el día ${submittedAppointment.preferredDate} (${submittedAppointment.preferredTimeSlot}). Mi nombre es ${submittedAppointment.customerName}.`
+                      `¡Hola Eslen! ✨ Acabo de solicitar una cita en FORMA (#${submittedAppointment.id}) para *${submittedAppointment.serviceName}* el día ${submittedAppointment.preferredDate} (${submittedAppointment.preferredTimeSlot}). Mi nombre es ${submittedAppointment.customerName}.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

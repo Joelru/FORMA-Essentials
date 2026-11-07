@@ -20,13 +20,13 @@ import { getFirebaseDb, doc, setDoc, onSnapshot, getDoc } from '../lib/firebase'
 import { playNotificationChime } from '../utils/format';
 
 const STORAGE_KEYS = {
-  PRODUCTS: 'forma_essentials_products_v1',
-  ORDERS: 'forma_essentials_orders_v1',
-  APPOINTMENTS: 'forma_essentials_appointments_v1',
-  SETTINGS: 'forma_essentials_settings_v1',
-  VISITS: 'forma_essentials_visits_v1',
-  CART: 'forma_essentials_cart_v1',
-  SESSION_VISITED: 'forma_essentials_session_visited_v1',
+  PRODUCTS: 'forma_store_products_v2',
+  ORDERS: 'forma_store_orders_v2',
+  APPOINTMENTS: 'forma_store_appointments_v2',
+  SETTINGS: 'forma_store_settings_v2',
+  VISITS: 'forma_store_visits_v2',
+  CART: 'forma_store_cart_v2',
+  SESSION_VISITED: 'forma_store_session_visited_v2',
 };
 
 interface CreateOrderInput {

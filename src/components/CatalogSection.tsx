@@ -48,17 +48,16 @@ export const CatalogSection: React.FC = () => {
     <section id="catalogo" className="py-12 sm:py-16 bg-[#FAF7F5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FDF2F4] border border-[#F4C2C2] text-[#B76E79] text-xs font-semibold uppercase tracking-widest mb-3">
             <Sparkles className="w-3.5 h-3.5" />
-            Boutique Oficial • FORMA Essentials
+            Catálogo Oficial • FORMA
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2926]">
-            Catálogo Curado por Eslen
+            Maquillaje & Cuidado de Cejas
           </h2>
-          <p className="mt-2.5 text-sm sm:text-base text-[#2D2926]/70">
-            Cada producto ha sido puesto a prueba en el estudio de <strong className="text-[#2D2926]">FORMA</strong> para
-            garantizar fijación, pigmentación limpia y cuidado real para tus cejas y piel.
+          <p className="mt-2 text-sm sm:text-base text-[#2D2926]/70">
+            Seleccionados por Eslen para lograr fijación, pigmentación limpia y cuidado real todos los días.
           </p>
         </div>
 
@@ -125,7 +124,7 @@ export const CatalogSection: React.FC = () => {
               No encontramos productos con ese filtro
             </h3>
             <p className="text-xs sm:text-sm text-[#2D2926]/65 mt-1">
-              Intenta con otra palabra clave o explora todas las categorías de FORMA Essentials.
+              Intenta con otra palabra clave o explora todas las categorías de FORMA.
             </p>
             <button
               onClick={() => {
