@@ -8,7 +8,10 @@ import {
   AppointmentStatus,
   StoreSettings,
   PaymentMethod,
-  AppointmentTimeSlot
+  AppointmentTimeSlot,
+  LegalTabType,
+  CookiePreferences,
+  FlyAnimationItem
 } from '../types';
 import {
   INITIAL_PRODUCTS,
@@ -27,6 +30,7 @@ const STORAGE_KEYS = {
   VISITS: 'forma_store_visits_v3',
   CART: 'forma_store_cart_v3',
   SESSION_VISITED: 'forma_store_session_visited_v3',
+  COOKIE_CONSENT: 'forma_cookie_consent_v1',
 };
 
 interface CreateOrderInput {
@@ -69,13 +73,32 @@ interface StoreContextType {
   trackProductClick: (productId: string) => void;
   openProductDetail: (product: Product) => void;
 
-  // Cart Actions
-  addToCart: (product: Product, quantity?: number, shouldTrackClick?: boolean) => void;
-  updateCartQuantity: (productId: string, quantity: number) => void;
+  // Cart Actions & Validations
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    shouldTrackClick?: boolean,
+    sourceEl?: HTMLElement | null
+  ) => boolean;
+  updateCartQuantity: (
+    productId: string,
+    quantity: number,
+    sourceEl?: HTMLElement | null
+  ) => void;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
+  getProductCartQuantity: (productId: string) => number;
   cartTotal: number;
   cartCount: number;
+  isCartBumping: boolean;
+  flyAnimations: FlyAnimationItem[];
+  triggerFlyToCart: (product: Product, sourceEl?: HTMLElement | null) => void;
+
+  // Legal & Cookie Consent
+  legalModalTab: LegalTabType;
+  setLegalModalTab: (tab: LegalTabType) => void;
+  cookieConsent: CookiePreferences | null;
+  saveCookieConsent: (prefs: Omit<CookiePreferences, 'updatedAt'>) => void;
 
   // Checkout & Orders
   createOrder: (input: CreateOrderInput) => Order;
@@ -135,6 +158,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProductModal, setSelectedProductModal] = useState<Product | null>(null);
+  const [isCartBumping, setIsCartBumping] = useState(false);
+  const [flyAnimations, setFlyAnimations] = useState<FlyAnimationItem[]>([]);
+  const [legalModalTab, setLegalModalTab] = useState<LegalTabType>(null);
+  const [cookieConsent, setCookieConsent] = useState<CookiePreferences | null>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.COOKIE_CONSENT);
+      return raw ? (JSON.parse(raw) as CookiePreferences) : null;
+    } catch {
+      return null;
+    }
+  });
   const [latestAlert, setLatestAlert] = useState<{
     type: 'order' | 'appointment';
     title: string;
@@ -202,6 +236,38 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
   }, [cart]);
+
+  // Reconcile Cart with Live Products Stock & Paused state (Strict Stock Validation)
+  useEffect(() => {
+    setCart((prevCart) => {
+      if (prevCart.length === 0) return prevCart;
+      let changed = false;
+      const reconciled: CartItem[] = [];
+
+      for (const item of prevCart) {
+        const liveProd = products.find((p) => p.id === item.product.id);
+        if (!liveProd || liveProd.paused || liveProd.stock <= 0) {
+          changed = true;
+          continue;
+        }
+        const validQty = Math.min(item.quantity, liveProd.stock);
+        if (
+          validQty !== item.quantity ||
+          liveProd.stock !== item.product.stock ||
+          liveProd.price !== item.product.price ||
+          liveProd.name !== item.product.name
+        ) {
+          changed = true;
+        }
+        reconciled.push({
+          product: liveProd,
+          quantity: validQty,
+        });
+      }
+
+      return changed ? reconciled : prevCart;
+    });
+  }, [products]);
 
   // Listen to Cross-Tab localStorage changes (real-time sync between Customer & Admin tabs)
   useEffect(() => {
@@ -386,40 +452,146 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [trackProductClick]
   );
 
-  // 2. Cart Management
-  const addToCart = useCallback(
-    (product: Product, quantity = 1, shouldTrackClick = true) => {
-      if (shouldTrackClick) {
-        trackProductClick(product.id);
-      }
-      setCart((prev) => {
-        const existingIndex = prev.findIndex((item) => item.product.id === product.id);
-        if (existingIndex > -1) {
-          const currentQty = prev[existingIndex].quantity;
-          const newQty = Math.min(product.stock, currentQty + quantity);
-          return prev.map((item, idx) =>
-            idx === existingIndex ? { ...item, quantity: newQty } : item
-          );
-        }
-        return [...prev, { product, quantity: Math.min(product.stock, quantity) }];
+  // 2. Cart Management, Stock Validations & Fly-to-Cart Animation
+  const triggerFlyToCart = useCallback((product: Product, sourceEl?: HTMLElement | null) => {
+    // Bump Cart Icon immediately and on arrival
+    setIsCartBumping(true);
+    setTimeout(() => setIsCartBumping(false), 650);
+
+    try {
+      const startRect = sourceEl?.getBoundingClientRect();
+      const startX = startRect
+        ? startRect.left + startRect.width / 2
+        : window.innerWidth / 2;
+      const startY = startRect
+        ? startRect.top + startRect.height / 2
+        : window.innerHeight / 2;
+
+      // Find visible cart button in DOM (Desktop top header or Mobile bottom bar)
+      const targets = Array.from(
+        document.querySelectorAll<HTMLElement>('[data-cart-target="true"]')
+      );
+      const visibleTarget = targets.find((el) => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
       });
+
+      const endRect = visibleTarget?.getBoundingClientRect();
+      const endX = endRect
+        ? endRect.left + endRect.width / 2
+        : window.innerWidth - 48;
+      const endY = endRect ? endRect.top + endRect.height / 2 : 36;
+
+      const animId = `fly-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      setFlyAnimations((prev) => [
+        ...prev,
+        {
+          id: animId,
+          productName: product.name,
+          productImage: product.image,
+          startX,
+          startY,
+          endX,
+          endY,
+        },
+      ]);
+
+      setTimeout(() => {
+        setFlyAnimations((prev) => prev.filter((item) => item.id !== animId));
+      }, 750);
+    } catch {
+      // Ignore DOM measurement errors
+    }
+  }, []);
+
+  const getProductCartQuantity = useCallback(
+    (productId: string): number => {
+      const found = cart.find((item) => item.product.id === productId);
+      return found ? found.quantity : 0;
     },
-    [trackProductClick]
+    [cart]
   );
 
-  const updateCartQuantity = useCallback((productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      setCart((prev) => prev.filter((item) => item.product.id !== productId));
-      return;
-    }
-    setCart((prev) =>
-      prev.map((item) =>
-        item.product.id === productId
-          ? { ...item, quantity: Math.min(item.product.stock, quantity) }
-          : item
-      )
-    );
-  }, []);
+  const addToCart = useCallback(
+    (
+      product: Product,
+      quantity = 1,
+      shouldTrackClick = true,
+      sourceEl?: HTMLElement | null
+    ): boolean => {
+      const liveProd = products.find((p) => p.id === product.id) || product;
+      if (liveProd.paused || liveProd.stock <= 0 || quantity <= 0) {
+        return false;
+      }
+
+      const existingItem = cart.find((item) => item.product.id === liveProd.id);
+      const currentQty = existingItem ? existingItem.quantity : 0;
+
+      // Strict stock validation: cannot exceed available stock
+      if (currentQty >= liveProd.stock) {
+        return false;
+      }
+
+      if (shouldTrackClick) {
+        trackProductClick(liveProd.id);
+      }
+
+      const nextQty = Math.min(liveProd.stock, Math.max(1, currentQty + quantity));
+
+      setCart((prev) => {
+        const existingIndex = prev.findIndex((item) => item.product.id === liveProd.id);
+        if (existingIndex > -1) {
+          return prev.map((item, idx) =>
+            idx === existingIndex
+              ? { product: liveProd, quantity: Math.min(liveProd.stock, item.quantity + quantity) }
+              : item
+          );
+        }
+        return [
+          ...prev,
+          { product: liveProd, quantity: Math.min(liveProd.stock, Math.max(1, quantity)) },
+        ];
+      });
+
+      if (nextQty > currentQty) {
+        triggerFlyToCart(liveProd, sourceEl);
+      }
+
+      return true;
+    },
+    [products, cart, trackProductClick, triggerFlyToCart]
+  );
+
+  const updateCartQuantity = useCallback(
+    (productId: string, quantity: number, sourceEl?: HTMLElement | null) => {
+      const liveProd = products.find((p) => p.id === productId);
+      if (!liveProd || liveProd.paused || liveProd.stock <= 0 || quantity <= 0) {
+        setCart((prev) => prev.filter((item) => item.product.id !== productId));
+        return;
+      }
+
+      const clampedQty = Math.min(liveProd.stock, Math.floor(quantity));
+      const existing = cart.find((item) => item.product.id === productId);
+      const prevQty = existing ? existing.quantity : 0;
+
+      if (clampedQty > prevQty) {
+        triggerFlyToCart(liveProd, sourceEl);
+      }
+
+      setCart((prev) => {
+        const exists = prev.some((item) => item.product.id === productId);
+        if (!exists) {
+          return [...prev, { product: liveProd, quantity: clampedQty }];
+        }
+        return prev.map((item) =>
+          item.product.id === productId
+            ? { product: liveProd, quantity: clampedQty }
+            : item
+        );
+      });
+    },
+    [products, cart, triggerFlyToCart]
+  );
 
   const removeFromCart = useCallback((productId: string) => {
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
@@ -427,6 +599,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const clearCart = useCallback(() => {
     setCart([]);
+  }, []);
+
+  const saveCookieConsent = useCallback((prefs: Omit<CookiePreferences, 'updatedAt'>) => {
+    const fullPrefs: CookiePreferences = {
+      ...prefs,
+      essential: true,
+      updatedAt: new Date().toISOString(),
+    };
+    setCookieConsent(fullPrefs);
+    localStorage.setItem(STORAGE_KEYS.COOKIE_CONSENT, JSON.stringify(fullPrefs));
   }, []);
 
   const cartTotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
@@ -684,8 +866,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateCartQuantity,
         removeFromCart,
         clearCart,
+        getProductCartQuantity,
         cartTotal,
         cartCount,
+        isCartBumping,
+        flyAnimations,
+        triggerFlyToCart,
+        legalModalTab,
+        setLegalModalTab,
+        cookieConsent,
+        saveCookieConsent,
         createOrder,
         updateOrderStatus,
         markAllOrdersReviewed,

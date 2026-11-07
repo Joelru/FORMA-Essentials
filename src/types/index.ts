@@ -107,6 +107,7 @@ export interface StoreSettings {
   nequiNumber: string;
   daviplataNumber: string;
   announcementText: string;
+  bookingUrl?: string;
 }
 
 export interface FirebaseCustomConfig {
@@ -116,4 +117,23 @@ export interface FirebaseCustomConfig {
   storageBucket: string;
   messagingSenderId: string;
   appId: string;
+}
+
+export type LegalTabType = 'terms' | 'privacy' | 'cookies' | null;
+
+export interface CookiePreferences {
+  essential: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  updatedAt: string;
+}
+
+export interface FlyAnimationItem {
+  id: string;
+  productName: string;
+  productImage: string;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 }

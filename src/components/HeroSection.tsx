@@ -9,13 +9,16 @@ import {
   Star,
   ArrowRight,
   ChevronDown,
-  MapPin
+  MapPin,
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { FormaLogo } from './FormaLogo';
+import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 export const HeroSection: React.FC = () => {
   const { settings } = useStore();
+  const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -30,7 +33,7 @@ export const HeroSection: React.FC = () => {
     {
       icon: Award,
       title: 'Aprobados por Eslen',
-      desc: 'Curaduría experta de estudio',
+      desc: 'Curaduría experta de cabina',
     },
     {
       icon: Truck,
@@ -45,17 +48,19 @@ export const HeroSection: React.FC = () => {
   ];
 
   const marqueeItems = [
-    'FORMA • ESTUDIO & COSMÉTICA',
-    'DISEÑO PROFESIONAL DE CEJAS POR ESLEN',
-    'MAQUILLAJE 100% ORIGINAL',
-    'VISAGISMO & LAMINADO DE CEJAS',
-    'ENTREGAS RÁPIDAS EN OCAÑA',
+    'DISEÑO ARQUITECTÓNICO DE CEJAS POR ESLEN',
+    'BOUTIQUE DE MAQUILLAJE 100% ORIGINAL',
+    'VISAGISMO ÁUREO & BROW LAMINATION',
+    'ENTREGAS EL MISMO DÍA EN OCAÑA',
     'PAGO CONTRA ENTREGA • NEQUI • DAVIPLATA',
   ];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 sm:pt-12">
-      {/* Subtle Luxury Ambient Glows & Architectural Curves (Pure SVG/CSS, Zero Lag) */}
+    <section
+      aria-label="Portada principal FORMA por Eslen en Ocaña"
+      className="relative overflow-hidden bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FAF7F5] pt-6 sm:pt-12"
+    >
+      {/* Subtle Luxury Ambient Glows & Architectural Curves */}
       <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#F4C2C2]/30 blur-3xl" />
       <div className="pointer-events-none absolute top-40 -left-24 w-80 h-80 rounded-full bg-[#E8A598]/20 blur-3xl" />
 
@@ -65,6 +70,7 @@ export const HeroSection: React.FC = () => {
         viewBox="0 0 1440 800"
         fill="none"
         preserveAspectRatio="none"
+        aria-hidden="true"
       >
         <path
           d="M-100 180 C 320 40, 820 340, 1540 120"
@@ -79,124 +85,155 @@ export const HeroSection: React.FC = () => {
         />
       </svg>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative pb-12 sm:pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative pb-10 sm:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Full Brand Presence & Value Proposition */}
+          {/* Left Column: Editorial Headline & Value Proposition */}
           <div className="lg:col-span-7 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#F4C2C2] shadow-sm mb-5">
-              <Sparkles className="w-3.5 h-3.5 text-[#B76E79]" />
-              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#2D2926]">
-                ESTUDIO &amp; COSMÉTICA • {settings.city.toUpperCase()}
+            {/* Location & Specialty Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 border border-[#F4C2C2] shadow-sm mb-5">
+              <MapPin className="w-3.5 h-3.5 text-[#B76E79]" />
+              <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.16em] text-[#2D2926]">
+                {settings.city} • Brow Bar &amp; Boutique
               </span>
             </div>
 
-            {/* Prominent FORMA Official Seal + Typographic Header */}
-            <div className="mb-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 sm:gap-5">
-              <FormaLogo size="xl" showWordmark={false} />
-              <div>
-                <span className="block font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-[0.18em] text-[#2D2926] leading-none">
-                  FORMA
-                </span>
-                <span className="block text-xs sm:text-sm uppercase tracking-[0.28em] text-[#B76E79] font-semibold mt-2">
-                  ESTUDIO &amp; COSMÉTICA • POR ESLEN
-                </span>
-              </div>
-            </div>
-
-            <h1 className="font-serif text-2xl sm:text-4xl lg:text-[42px] font-semibold text-[#2D2926] leading-[1.18] mt-4">
-              Diseño Profesional de Cejas por{' '}
+            {/* Editorial Magazine H1 */}
+            <h1 className="font-serif text-3xl sm:text-5xl lg:text-[54px] font-bold text-[#2D2926] leading-[1.12] tracking-tight">
+              El arte de enmarcar tu mirada,{' '}
               <span className="italic font-normal text-[#B76E79] underline decoration-[#F4C2C2] underline-offset-4">
-                Eslen
-              </span>{' '}
-              &amp; Maquillaje Seleccionado para tu Rutina.
+                esculpido por Eslen
+              </span>
+              .
             </h1>
 
-            <p className="mt-4 text-sm sm:text-base text-[#2D2926]/75 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-              Bienvenida a <strong className="text-[#2D2926] font-semibold">FORMA</strong>.
-              Un espacio dedicado a realzar tu belleza natural en Ocaña donde la arquitectura
-              de tu mirada se une con los productos de maquillaje, fijación e hidratación que Eslen utiliza y recomienda en su estudio.
+            <p className="mt-4 sm:mt-5 text-sm sm:text-base lg:text-[17px] text-[#2D2926]/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              Especialistas en <strong>diseño anatómico de cejas, visagismo y laminado profesional</strong> en Ocaña, junto a una selección exclusiva de maquillaje, fijadores y sueros que{' '}
+              <strong className="text-[#2D2926] font-semibold">Eslen</strong> utiliza en cabina para tu rutina diaria.
             </p>
+
+            {/* Two-Pillar Editorial Highlights */}
+            <div className="mt-5 flex flex-wrap items-center justify-center lg:justify-start gap-2.5 text-xs font-medium text-[#2D2926]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/85 border border-[#F4C2C2]/70 shadow-sm">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#B76E79]" />
+                Diagnóstico de Visagismo Personalizado
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/85 border border-[#F4C2C2]/70 shadow-sm">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#6B9080]" />
+                Cosmética Original con Envío Hoy
+              </span>
+            </div>
 
             {/* Primary High-Contrast CTAs */}
             <div className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3.5">
               <button
                 onClick={() => scrollTo('catalogo')}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-7 py-4 rounded-2xl shadow-luxury transition-all transform hover:-translate-y-0.5 active:scale-98 text-sm sm:text-base"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-7 py-4 rounded-2xl shadow-luxury transition-all transform hover:-translate-y-0.5 active:scale-95 text-sm sm:text-base"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Explorar Maquillaje</span>
+                <span>Comprar Maquillaje</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <button
-                onClick={() => scrollTo('citas-eslen')}
-                className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-[#FDF2F4] text-[#2D2926] font-semibold px-7 py-4 rounded-2xl border-2 border-[#E8A598] shadow-sm transition-all transform hover:-translate-y-0.5 text-sm sm:text-base"
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-[#FDF2F4] text-[#2D2926] font-semibold px-7 py-4 rounded-2xl border-2 border-[#E8A598] shadow-sm transition-all transform hover:-translate-y-0.5 active:scale-95 text-sm sm:text-base"
               >
                 <Calendar className="w-4 h-4 text-[#B76E79]" />
                 <span>Agendar Cita de Cejas</span>
-              </button>
+                <ExternalLink className="w-3.5 h-3.5 text-[#B76E79]" />
+              </a>
             </div>
 
-            {/* Social Proof Pill */}
-            <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-4 text-xs text-[#2D2926]/75">
-              <div className="flex items-center gap-1 bg-white/80 px-3 py-1.5 rounded-full border border-[#F4C2C2]/60">
-                <div className="flex text-[#B76E79]">
+            {/* Social Proof & Founder Pill with Eslen's Real Photo */}
+            <div className="mt-7 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs text-[#2D2926]/75">
+              <button
+                type="button"
+                onClick={() => scrollTo('citas-eslen')}
+                className="flex items-center gap-2.5 bg-white/95 hover:bg-white pl-1.5 pr-3.5 py-1.5 rounded-full border border-[#F4C2C2]/80 shadow-sm transition-all"
+              >
+                <img
+                  src="/eslen-profile.jpg"
+                  alt="Eslen — Fundadora de FORMA"
+                  className="w-7 h-7 rounded-full object-cover border border-[#B76E79]"
+                />
+                <span className="font-semibold text-[#2D2926]">
+                  Por Eslen
+                </span>
+                <span className="text-[#B76E79]">•</span>
+                <div className="flex text-[#B76E79]" aria-label="Calificación 4.9 de 5 estrellas">
                   {[...Array(5)].map((_, idx) => (
-                    <Star key={idx} className="w-3.5 h-3.5 fill-[#B76E79]" />
+                    <Star key={idx} className="w-3 h-3 fill-[#B76E79]" />
                   ))}
                 </div>
-                <span className="font-semibold text-[#2D2926] ml-1">4.9/5</span>
-                <span>• +450 clientas felices en Ocaña</span>
-              </div>
-              <div className="flex items-center gap-1 text-[#6B9080] font-medium">
-                <MapPin className="w-3.5 h-3.5" />
-                <span>Despachos el mismo día en el casco urbano</span>
+                <span className="font-semibold text-[#2D2926]">4.9/5</span>
+              </button>
+
+              <div className="flex items-center gap-1 text-[#6B9080] font-semibold">
+                <Truck className="w-3.5 h-3.5" />
+                <span>Domicilios rápidos en el casco urbano</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Editorial Luxury Card with Realistic Sculpted Eyebrows */}
+          {/* Right Column: Editorial Luxury Card with Realistic Sculpted Eyebrows + Eslen Mini Portrait */}
           <div className="lg:col-span-5">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-luxury bg-[#FDF2F4] aspect-[4/4.3]">
+              <div className="relative rounded-3xl overflow-hidden border-4 border-white shadow-luxury bg-[#FDF2F4] aspect-[4/4.2]">
                 <img
                   src="/hero-brows.jpg"
-                  alt="FORMA por Eslen - Diseño Profesional de Cejas y Laminado"
+                  alt="Diseño Profesional de Cejas, Laminado y Visagismo por Eslen en Ocaña"
                   className="w-full h-full object-cover object-center"
+                  fetchPriority="high"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/80 via-[#2D2926]/10 to-transparent" />
 
                 {/* Floating Top Tag */}
-                <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                  <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-xs font-semibold tracking-wider shadow-sm">
-                    ✨ ESTUDIO &amp; COSMÉTICA
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+                  <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-[11px] sm:text-xs font-semibold tracking-wider shadow-sm">
+                    ✦ Miradas Reales por Eslen
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-semibold shadow-sm">
-                    Agenda Abierta
-                  </span>
+                  <a
+                    href={bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1 rounded-full bg-[#6B9080] hover:bg-[#58796b] text-white text-[11px] font-semibold shadow-sm transition-colors"
+                  >
+                    Agenda Abierta ↗
+                  </a>
                 </div>
 
-                {/* Bottom Overlay Caption */}
-                <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-[#F4C2C2]/60">
+                {/* Bottom Overlay Caption with Eslen's Avatar */}
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 sm:bottom-4 sm:left-4 sm:right-4 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 sm:p-4 shadow-lg border border-[#F4C2C2]/60">
                   <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-[#B76E79] font-bold">
-                        ARQUITECTURA DE MIRADA • FORMA
-                      </p>
-                      <p className="font-serif text-lg font-bold text-[#2D2926]">
-                        Visagismo, Laminado de Cejas &amp; Maquillaje
-                      </p>
-                      <p className="text-xs text-[#2D2926]/70 mt-0.5">
-                        Atención personalizada por Eslen en Ocaña, N. de S.
-                      </p>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <img
+                        src="/eslen-profile.jpg"
+                        alt="Eslen — Especialista en Cejas FORMA"
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-[#B76E79] shrink-0 shadow-sm"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-[#B76E79] font-bold truncate">
+                          ESLEN • BROW ARTIST
+                        </p>
+                        <p className="font-serif text-base sm:text-lg font-bold text-[#2D2926] truncate">
+                          Visagismo, Laminado &amp; Boutique
+                        </p>
+                        <p className="text-[11px] text-[#2D2926]/70 truncate">
+                          Reserva tu cita online o conoce los rituales
+                        </p>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => scrollTo('citas-eslen')}
+                    <a
+                      href={bookingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="shrink-0 w-10 h-10 rounded-xl bg-[#B76E79] text-white flex items-center justify-center hover:bg-[#9A5660] transition-colors"
-                      aria-label="Ir a agendar cita"
+                      aria-label="Reservar cita con Eslen en plataforma oficial"
                     >
                       <ArrowRight className="w-5 h-5" />
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -211,15 +248,15 @@ export const HeroSection: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white/90 hover:bg-white rounded-2xl p-4 border border-[#F4C2C2]/50 shadow-soft flex items-start gap-3 transition-all"
+                className="bg-white/90 hover:bg-white rounded-2xl p-3.5 sm:p-4 border border-[#F4C2C2]/50 shadow-soft flex items-start gap-2.5 sm:gap-3 transition-all"
               >
-                <div className="w-10 h-10 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] flex items-center justify-center shrink-0 text-[#B76E79]">
-                  <Icon className="w-5 h-5" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] flex items-center justify-center shrink-0 text-[#B76E79]">
+                  <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-[#2D2926] leading-snug">
+                <div className="min-w-0">
+                  <h2 className="font-sans text-xs sm:text-sm font-semibold text-[#2D2926] leading-snug">
                     {badge.title}
-                  </h3>
+                  </h2>
                   <p className="text-[11px] sm:text-xs text-[#2D2926]/65 mt-0.5">
                     {badge.desc}
                   </p>
@@ -233,13 +270,14 @@ export const HeroSection: React.FC = () => {
       {/* =========================================================
           PREMIUM EDITORIAL TRANSITION BRIDGE (HERO -> SHOPPING)
          ========================================================= */}
-      <div className="relative pt-4">
+      <div className="relative pt-2 sm:pt-4">
         {/* Architectural Layered Silk Wave SVG */}
         <div className="relative w-full overflow-hidden leading-none">
           <svg
             className="relative block w-full h-10 sm:h-16"
             viewBox="0 0 1440 100"
             preserveAspectRatio="none"
+            aria-hidden="true"
           >
             <path
               d="M0,40 C320,95 620,0 960,50 C1200,85 1350,35 1440,20 L1440,100 L0,100 Z"
@@ -279,7 +317,7 @@ export const HeroSection: React.FC = () => {
           <button
             onClick={() => scrollTo('catalogo')}
             className="group inline-flex flex-col items-center gap-1.5 focus:outline-none"
-            aria-label="Explorar colección FORMA"
+            aria-label="Explorar colección de maquillaje FORMA"
           >
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#B76E79]">
               Colección Seleccionada por Eslen

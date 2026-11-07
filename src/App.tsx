@@ -8,6 +8,10 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { CartDrawer } from './components/CartDrawer';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Footer } from './components/Footer';
+import { FlyToCartAnimation } from './components/FlyToCartAnimation';
+import { LegalModal } from './components/LegalModal';
+import { CookieConsentBanner } from './components/CookieConsentBanner';
+import { SEOHead } from './components/SEOHead';
 
 function checkIsAdminUrl(): boolean {
   const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
@@ -24,13 +28,6 @@ export const App: React.FC = () => {
   const [activeView, setActiveView] = useState<'store' | 'admin'>(() =>
     checkIsAdminUrl() ? 'admin' : 'store'
   );
-
-  useEffect(() => {
-    document.title =
-      activeView === 'admin'
-        ? 'FORMA | Panel de Administración'
-        : 'FORMA — Diseño de Cejas & Maquillaje por Eslen | Ocaña';
-  }, [activeView]);
 
   useEffect(() => {
     const syncViewFromUrl = () => {
@@ -56,6 +53,7 @@ export const App: React.FC = () => {
 
   return (
     <StoreProvider>
+      <SEOHead activeView={activeView} />
       <div className="min-h-screen flex flex-col bg-[#FAF7F5] text-[#2D2926]">
         <Navbar activeView={activeView} setActiveView={handleSetView} />
 
@@ -73,9 +71,12 @@ export const App: React.FC = () => {
 
         <Footer />
 
-        {/* Interactive Modals & Drawers */}
+        {/* Interactive Modals, Drawers, Animations & Cookie/Legal Consent */}
         <ProductDetailModal />
         <CartDrawer />
+        <LegalModal />
+        <CookieConsentBanner />
+        <FlyToCartAnimation />
       </div>
     </StoreProvider>
   );

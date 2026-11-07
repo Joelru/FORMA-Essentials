@@ -1,11 +1,20 @@
 import React from 'react';
-import { Instagram, MapPin, Phone, Sparkles, Heart } from 'lucide-react';
+import {
+  Instagram,
+  MapPin,
+  Phone,
+  Sparkles,
+  Heart,
+  FileText,
+  ShieldCheck,
+  Cookie
+} from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { cleanPhone } from '../utils/format';
 import { FormaLogo } from './FormaLogo';
 
 export const Footer: React.FC = () => {
-  const { settings } = useStore();
+  const { settings, setLegalModalTab } = useStore();
   const whatsappClean = cleanPhone(settings.whatsappNumber);
 
   return (
@@ -16,25 +25,25 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-5 space-y-3.5">
             <FormaLogo size="md" variant="light" showWordmark={true} showSubtitle={true} />
             <p className="text-xs sm:text-sm text-[#FAF7F5]/75 leading-relaxed max-w-md pt-1">
-              Estudio especializado en diseño arquitectónico de cejas, visagismo, laminado
-              profesional y boutique de maquillaje 100% original seleccionado por{' '}
+              Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado
+              profesional (Brow Lamination) y boutique de maquillaje 100% original seleccionado por{' '}
               <strong>{settings.ownerName}</strong> con entregas rápidas en Ocaña, Norte de Santander.
             </p>
-            <div className="pt-1 flex items-center gap-2 text-xs text-[#F4C2C2]">
+            <address className="not-italic pt-1 flex items-center gap-2 text-xs text-[#F4C2C2]">
               <MapPin className="w-4 h-4 text-[#B76E79] shrink-0" />
               <span>{settings.studioAddress}</span>
-            </div>
+            </address>
           </div>
 
-          {/* Quick Links (Public Store Only — Admin Hidden) */}
+          {/* Quick Links & Legal Links */}
           <div className="md:col-span-3 space-y-3">
             <h4 className="font-serif text-lg font-bold text-[#F4C2C2] tracking-wide">
-              Explorar FORMA
+              Explorar &amp; Legal
             </h4>
             <ul className="space-y-2.5 text-xs sm:text-sm text-[#FAF7F5]/80">
               <li>
                 <a href="#catalogo" className="hover:text-[#F4C2C2] transition-colors">
-                  Catálogo de Maquillaje & Cejas
+                  Catálogo de Maquillaje &amp; Cejas
                 </a>
               </li>
               <li>
@@ -42,13 +51,43 @@ export const Footer: React.FC = () => {
                   Agendar Cita de Cejas con Eslen
                 </a>
               </li>
+              <li className="pt-1 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setLegalModalTab('terms')}
+                  className="inline-flex items-center gap-1.5 hover:text-[#F4C2C2] transition-colors text-left"
+                >
+                  <FileText className="w-3.5 h-3.5 text-[#E8A598]" />
+                  <span>Términos y Condiciones</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setLegalModalTab('privacy')}
+                  className="inline-flex items-center gap-1.5 hover:text-[#F4C2C2] transition-colors text-left"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#E8A598]" />
+                  <span>Política de Privacidad y Datos</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setLegalModalTab('cookies')}
+                  className="inline-flex items-center gap-1.5 hover:text-[#F4C2C2] transition-colors text-left"
+                >
+                  <Cookie className="w-3.5 h-3.5 text-[#E8A598]" />
+                  <span>Configuración de Cookies</span>
+                </button>
+              </li>
             </ul>
           </div>
 
           {/* Dynamic Social Networks */}
           <div className="md:col-span-4 space-y-3">
             <h4 className="font-serif text-lg font-bold text-[#F4C2C2] tracking-wide">
-              Síguenos & Contáctanos
+              Síguenos &amp; Contáctanos
             </h4>
             <p className="text-xs text-[#FAF7F5]/70">
               Conoce resultados reales de cejas y tutoriales de rutina en nuestras redes oficiales:
@@ -102,11 +141,12 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FAF7F5]/55">
-          <p>
-            © {new Date().getFullYear()} <strong>FORMA</strong> por Eslen • Ocaña, Norte de Santander, Colombia.
+          <p className="text-center sm:text-left">
+            © {new Date().getFullYear()} <strong>FORMA — Estudio &amp; Cosmética por Eslen</strong> • Ocaña, Norte de Santander, Colombia. Todos los derechos reservados.
           </p>
           <p className="flex items-center gap-1">
-            Diseñado con estética Clean Girl & Luxury Beauty <Heart className="w-3.5 h-3.5 text-[#B76E79] fill-[#B76E79]" />
+            Diseñado con estética Clean Girl &amp; Luxury Beauty{' '}
+            <Heart className="w-3.5 h-3.5 text-[#B76E79] fill-[#B76E79]" />
           </p>
         </div>
       </div>
@@ -118,6 +158,7 @@ export const Footer: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           title={`Instagram ${settings.instagramHandle}`}
+          aria-label={`Visitar Instagram ${settings.instagramHandle}`}
           className="w-11 h-11 rounded-full bg-white text-[#2D2926] hover:bg-[#B76E79] hover:text-white border border-[#F4C2C2] shadow-luxury flex items-center justify-center transition-all"
         >
           <Instagram className="w-5 h-5" />
@@ -129,6 +170,7 @@ export const Footer: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           title="Hablar con Eslen por WhatsApp"
+          aria-label="Contactar a Eslen por WhatsApp"
           className="w-11 h-11 rounded-full bg-[#6B9080] hover:bg-[#57786a] text-white shadow-luxury flex items-center justify-center transition-all"
         >
           <Phone className="w-5 h-5" />

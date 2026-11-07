@@ -1,84 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Calendar,
   Clock,
   Sparkles,
-  CheckCircle2,
-  User,
-  Phone,
   ShieldCheck,
   Award,
   Heart,
-  MessageCircle
+  ExternalLink,
+  ArrowUpRight,
+  CheckCircle2,
+  MapPin
 } from 'lucide-react';
 import { BROW_SERVICES } from '../data/seedData';
-import { AppointmentTimeSlot, Appointment } from '../types';
 import { useStore } from '../context/StoreContext';
-import { formatCOP, isValidColombianPhone, cleanPhone } from '../utils/format';
+import { formatCOP } from '../utils/format';
+
+export const EXTERNAL_BOOKING_URL = 'https://beautysitesbd.web.app/booking/framestudio';
 
 export const BookingSection: React.FC = () => {
-  const { createAppointment, settings } = useStore();
-
-  const [selectedServiceId, setSelectedServiceId] = useState<string>(BROW_SERVICES[0].id);
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [preferredDate, setPreferredDate] = useState(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow.toISOString().split('T')[0];
-  });
-  const [preferredTimeSlot, setPreferredTimeSlot] = useState<AppointmentTimeSlot>(
-    'Tarde (2:00 PM - 6:30 PM)'
-  );
-  const [notes, setNotes] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-  const [submittedAppointment, setSubmittedAppointment] = useState<Appointment | null>(null);
-
-  const selectedService =
-    BROW_SERVICES.find((s) => s.id === selectedServiceId) || BROW_SERVICES[0];
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg('');
-
-    if (customerName.trim().length < 3) {
-      setErrorMsg('Por favor ingresa tu nombre completo para agendar tu cita.');
-      return;
-    }
-
-    if (!isValidColombianPhone(customerPhone)) {
-      setErrorMsg(
-        'Ingresa un número de WhatsApp válido de 10 dígitos en Colombia (ej. 3154829104).'
-      );
-      return;
-    }
-
-    if (!preferredDate) {
-      setErrorMsg('Por favor selecciona la fecha deseada para tu cita.');
-      return;
-    }
-
-    const created = createAppointment({
-      customerName,
-      customerPhone: cleanPhone(customerPhone),
-      serviceId: selectedService.id,
-      serviceName: selectedService.name,
-      servicePrice: selectedService.price,
-      serviceDuration: selectedService.duration,
-      preferredDate,
-      preferredTimeSlot,
-      notes,
-    });
-
-    setSubmittedAppointment(created);
-    setCustomerName('');
-    setCustomerPhone('');
-    setNotes('');
-  };
+  const { settings } = useStore();
+  const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   return (
     <section
       id="citas-eslen"
+      aria-label="Estudio de Cejas por Eslen y Reserva de Citas Online"
       className="py-14 sm:py-20 bg-gradient-to-b from-[#FDF2F4] via-[#FAF7F5] to-[#FDF2F4] border-t border-[#F4C2C2]/50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,337 +32,214 @@ export const BookingSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white border border-[#F4C2C2] text-[#B76E79] text-xs font-semibold uppercase tracking-widest mb-3 shadow-sm">
             <Calendar className="w-3.5 h-3.5" />
-            Estudio Especializado en Ocaña • FORMA
+            Cabina Especializada en Ocaña • FORMA Studio
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2926]">
-            Agenda tu Cita de Cejas con{' '}
+            Diseño de Cejas &amp; Visagismo por{' '}
             <span className="italic text-[#B76E79]">Eslen</span>
           </h2>
           <p className="mt-3 text-sm sm:text-base text-[#2D2926]/75 leading-relaxed">
             Tus cejas son el marco arquitectónico de tu rostro. En{' '}
-            <strong className="text-[#2D2926]">FORMA Studio</strong> trabajamos bajo diagnóstico de
-            visagismo personalizado para realzar tu expresión natural sin diseños rígidos ni artificiales.
+            <strong className="text-[#2D2926]">FORMA</strong> trabajamos bajo diagnóstico
+            personalizado para realzar tu expresión natural. Consulta nuestros rituales y elige tu
+            día y hora disponible directamente en nuestra plataforma oficial de reservas.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Eslen Profile + Interactive Service Selector */}
-          <div className="lg:col-span-7 space-y-6">
-            {/* Eslen Specialist Profile Card */}
-            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2]/70 shadow-soft flex flex-col sm:flex-row items-center gap-5">
-              <div className="relative shrink-0">
+          {/* Left Column: Prominent Editorial Portrait of Eslen + Direct Booking Platform Card */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24">
+            <div className="bg-white rounded-3xl overflow-hidden border border-[#F4C2C2] shadow-luxury">
+              {/* Real Portrait of Eslen */}
+              <div className="relative aspect-[4/4.4] w-full bg-[#FDF2F4] overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=85"
-                  alt="Eslen - Especialista en Diseño de Cejas FORMA"
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-[#E8A598] shadow-md"
+                  src="/eslen-profile.jpg"
+                  alt="Eslen — Fundadora y Especialista en Diseño de Cejas de FORMA Estudio & Cosmética en Ocaña"
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
                 />
-                <span className="absolute -bottom-2 -right-2 px-2.5 py-0.5 rounded-full bg-[#B76E79] text-white text-[10px] font-bold shadow">
-                  Brow Artist
-                </span>
-              </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2D2926]/85 via-[#2D2926]/15 to-transparent" />
 
-              <div className="text-center sm:text-left">
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <h3 className="font-serif text-2xl font-bold text-[#2D2926]">
-                    Eslen — Fundadora de FORMA
+                {/* Top Floating Badge */}
+                <div className="absolute top-4 left-4 right-4 flex items-center justify-between gap-2">
+                  <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D2926] text-xs font-bold tracking-wider shadow-sm">
+                    ✦ Brow Artist &amp; Fundadora
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-semibold shadow-sm">
+                    Ocaña, N. de S.
+                  </span>
+                </div>
+
+                {/* Bottom Overlay Identity */}
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-[#F4C2C2] font-bold">
+                    ATENCIÓN PERSONALIZADA EN CABINA
+                  </p>
+                  <h3 className="font-serif text-3xl sm:text-4xl font-bold leading-tight mt-0.5">
+                    Eslen — FORMA Studio
                   </h3>
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#FDF2F4] text-[#B76E79] border border-[#F4C2C2]">
-                    Visagismo & Brow Lamination
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm text-[#2D2926]/75 mt-2 leading-relaxed">
-                  Especialista en diseño anatómico de cejas, sombreado híbrido semipermanente y
-                  recuperación capilar de cejas. Cabina con protocolos de bioseguridad clínica y
-                  productos hipoalergénicos de alta gama en Ocaña.
-                </p>
-                <div className="mt-3 flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-[#2D2926]/80 font-medium">
-                  <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-4 h-4 text-[#6B9080]" />
-                    Bioseguridad 100% Esterilizada
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Award className="w-4 h-4 text-[#B76E79]" />
-                    Mapeo Facial Personalizado
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-4 h-4 text-[#B76E79]" />
-                    Acabado Clean Girl Natural
-                  </span>
+                  <p className="text-xs sm:text-sm text-[#FAF7F5]/90 mt-1 leading-relaxed">
+                    Especialista en visagismo áureo, laminado profesional (Brow Lamination),
+                    sombreado híbrido y recuperación capilar de cejas.
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* Service Selector List */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926]">
-                  1. Elige tu Ritual de Cejas
-                </h3>
-                <span className="text-xs text-[#B76E79] font-semibold">
-                  Haz clic en un servicio para seleccionarlo
-                </span>
-              </div>
+              {/* Studio Highlights & External Booking CTA */}
+              <div className="p-5 sm:p-6 space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 text-xs text-[#2D2926]/85 font-medium">
+                  <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
+                    <ShieldCheck className="w-4 h-4 text-[#6B9080] shrink-0" />
+                    <span>Protocolos de bioseguridad clínica 100% esterilizados</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
+                    <Award className="w-4 h-4 text-[#B76E79] shrink-0" />
+                    <span>Diagnóstico anatómico según la estructura de tu rostro</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
+                    <Heart className="w-4 h-4 text-[#B76E79] shrink-0" />
+                    <span>Acabado Clean Girl armónico, natural y duradero</span>
+                  </div>
+                </div>
 
-              <div className="space-y-3">
-                {BROW_SERVICES.map((service) => {
-                  const isSelected = service.id === selectedServiceId;
-                  return (
-                    <div
-                      key={service.id}
-                      onClick={() => setSelectedServiceId(service.id)}
-                      className={`cursor-pointer rounded-2xl p-4 sm:p-5 border transition-all ${
-                        isSelected
-                          ? 'bg-white border-2 border-[#B76E79] shadow-luxury'
-                          : 'bg-white/80 hover:bg-white border-[#F4C2C2]/60 shadow-sm'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div
-                            className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                              isSelected
-                                ? 'border-[#B76E79] bg-[#B76E79] text-white'
-                                : 'border-[#E8A598]'
-                            }`}
-                          >
-                            {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
-                          </div>
-                          <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="font-serif text-lg sm:text-xl font-bold text-[#2D2926]">
-                                {service.name}
-                              </h4>
-                              {service.tag && (
-                                <span className="px-2.5 py-0.5 rounded-full bg-[#FDF2F4] text-[#B76E79] border border-[#F4C2C2] text-[10px] font-bold uppercase tracking-wider">
-                                  {service.tag}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-[#2D2926]/70 mt-1 leading-relaxed">
-                              {service.description}
-                            </p>
-                            <div className="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium text-[#2D2926]/70 bg-[#FAF7F5] px-2.5 py-1 rounded-lg border border-[#F4C2C2]/40">
-                              <Clock className="w-3.5 h-3.5 text-[#B76E79]" />
-                              <span>Duración estimada: {service.duration}</span>
-                            </div>
-                          </div>
-                        </div>
+                {/* Primary External Booking Platform CTA */}
+                <div className="pt-1 space-y-2.5">
+                  <a
+                    href={bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold py-4 px-6 rounded-2xl shadow-luxury flex items-center justify-center gap-2.5 text-sm sm:text-base transition-all transform hover:-translate-y-0.5 active:scale-95"
+                  >
+                    <Calendar className="w-4 h-4 shrink-0" />
+                    <span>Agendar Cita en Plataforma Oficial</span>
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                  </a>
 
-                        <div className="text-right shrink-0">
-                          <span className="font-serif text-xl sm:text-2xl font-bold text-[#B76E79]">
-                            {formatCOP(service.price, false)}
-                          </span>
-                          <span className="block text-[10px] text-[#2D2926]/50 font-semibold">
-                            COP
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                  <p className="text-[11px] text-center text-[#2D2926]/65 flex items-center justify-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#6B9080] shrink-0" />
+                    <span>
+                      Serás redirigida a nuestra agenda oficial para elegir fecha y hora exacta.
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Booking Request Form */}
-          <div className="lg:col-span-5">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#F4C2C2] shadow-luxury sticky top-24">
-              {submittedAppointment ? (
-                <div className="space-y-5 text-center py-4">
-                  <div className="w-16 h-16 rounded-full bg-[#6B9080] text-white flex items-center justify-center mx-auto shadow-md">
-                    <CheckCircle2 className="w-9 h-9" />
-                  </div>
-                  <span className="inline-block px-3.5 py-1 rounded-full bg-[#6B9080]/15 text-[#6B9080] text-xs font-bold uppercase tracking-wider">
-                    Solicitud Recibida • #{submittedAppointment.id}
-                  </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2D2926]">
-                    ¡Solicitud Enviada a Eslen!
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#2D2926]/75 leading-relaxed">
-                    Hola <strong>{submittedAppointment.customerName}</strong>, tu solicitud para{' '}
-                    <strong className="text-[#B76E79]">{submittedAppointment.serviceName}</strong>{' '}
-                    el día <strong>{submittedAppointment.preferredDate}</strong> en la jornada de la{' '}
-                    <strong>{submittedAppointment.preferredTimeSlot}</strong> ya está en el panel de{' '}
-                    <strong>FORMA Studio</strong>.
-                  </p>
+          {/* Right Column: Menu of Brow Rituals with Direct Link to External Booking */}
+          <div className="lg:col-span-7 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-[#B76E79]">
+                  Menú de Servicios en Cabina
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2D2926]">
+                  Rituales de Cejas por Eslen
+                </h3>
+              </div>
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B76E79] hover:text-[#9A5660] underline underline-offset-4"
+              >
+                <span>Ver disponibilidad en agenda</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
 
-                  <div className="bg-[#FAF7F5] rounded-2xl p-4 border border-[#F4C2C2] text-left text-xs space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-[#2D2926]/60">Servicio:</span>
-                      <span className="font-semibold text-[#2D2926] text-right">
-                        {submittedAppointment.serviceName}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#2D2926]/60">Duración y Valor:</span>
-                      <span className="font-semibold text-[#B76E79]">
-                        {submittedAppointment.serviceDuration} •{' '}
-                        {formatCOP(submittedAppointment.servicePrice)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[#2D2926]/60">WhatsApp registrado:</span>
-                      <span className="font-semibold text-[#2D2926]">
-                        {submittedAppointment.customerPhone}
-                      </span>
-                    </div>
-                  </div>
+            <div className="space-y-3.5">
+              {BROW_SERVICES.map((service) => (
+                <article
+                  key={service.id}
+                  className="group bg-white hover:bg-[#FDF2F4]/40 rounded-2xl p-4 sm:p-5 border border-[#F4C2C2]/70 hover:border-[#B76E79] shadow-soft hover:shadow-luxury transition-all"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="font-serif text-lg sm:text-xl font-bold text-[#2D2926] group-hover:text-[#B76E79] transition-colors">
+                          {service.name}
+                        </h4>
+                        {service.tag && (
+                          <span className="px-2.5 py-0.5 rounded-full bg-[#FDF2F4] text-[#B76E79] border border-[#F4C2C2] text-[10px] font-bold uppercase tracking-wider">
+                            ✦ {service.tag}
+                          </span>
+                        )}
+                      </div>
 
-                  <a
-                    href={`https://wa.me/57${cleanPhone(
-                      settings.whatsappNumber
-                    )}?text=${encodeURIComponent(
-                      `¡Hola Eslen! ✨ Acabo de solicitar una cita en FORMA (#${submittedAppointment.id}) para *${submittedAppointment.serviceName}* el día ${submittedAppointment.preferredDate} (${submittedAppointment.preferredTimeSlot}). Mi nombre es ${submittedAppointment.customerName}.`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full bg-[#6B9080] hover:bg-[#58796b] text-white font-semibold py-3.5 px-5 rounded-2xl flex items-center justify-center gap-2 text-xs sm:text-sm shadow-sm transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Adelantar confirmación por WhatsApp</span>
-                  </a>
+                      <p className="text-xs sm:text-sm text-[#2D2926]/75 leading-relaxed">
+                        {service.description}
+                      </p>
 
-                  <button
-                    onClick={() => setSubmittedAppointment(null)}
-                    className="w-full py-3 rounded-xl border border-[#F4C2C2] text-xs font-semibold text-[#2D2926] hover:bg-[#FDF2F4] transition-colors"
-                  >
-                    Agendar otra cita
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-[#B76E79]">
-                      Reserva en 30 Segundos
-                    </span>
-                    <h3 className="font-serif text-2xl font-bold text-[#2D2926] mt-0.5">
-                      2. Datos de tu Cita
-                    </h3>
-                  </div>
+                      <div className="pt-1 flex flex-wrap items-center gap-3">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2D2926]/70 bg-[#FAF7F5] px-2.5 py-1 rounded-lg border border-[#F4C2C2]/40">
+                          <Clock className="w-3.5 h-3.5 text-[#B76E79]" />
+                          <span>Duración: {service.duration}</span>
+                        </span>
 
-                  {/* Selected Service Banner */}
-                  <div className="bg-[#FDF2F4] border border-[#F4C2C2] rounded-2xl p-3.5">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#B76E79]">
-                      Servicio Seleccionado:
-                    </p>
-                    <p className="font-serif text-lg font-bold text-[#2D2926]">
-                      {selectedService.name}
-                    </p>
-                    <div className="flex items-center justify-between text-xs mt-1">
-                      <span className="text-[#2D2926]/70">
-                        Duración: {selectedService.duration}
-                      </span>
-                      <span className="font-bold text-[#B76E79]">
-                        {formatCOP(selectedService.price)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {errorMsg && (
-                    <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-medium">
-                      {errorMsg}
-                    </div>
-                  )}
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
-                      Tu Nombre Completo *
-                    </label>
-                    <div className="relative">
-                      <User className="w-4 h-4 text-[#B76E79] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        required
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="Ej. Laura Sofía Vergel"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-sm text-[#2D2926] focus:outline-none focus:border-[#B76E79] focus:bg-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
-                      Tu WhatsApp (10 dígitos en Colombia) *
-                    </label>
-                    <div className="relative">
-                      <Phone className="w-4 h-4 text-[#B76E79] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="tel"
-                        required
-                        maxLength={10}
-                        value={customerPhone}
-                        onChange={(e) =>
-                          setCustomerPhone(e.target.value.replace(/\D/g, '').slice(0, 10))
-                        }
-                        placeholder="Ej. 3169081122"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-sm text-[#2D2926] focus:outline-none focus:border-[#B76E79] focus:bg-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
-                        Fecha Deseada *
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        min={new Date().toISOString().split('T')[0]}
-                        value={preferredDate}
-                        onChange={(e) => setPreferredDate(e.target.value)}
-                        className="w-full px-3.5 py-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:border-[#B76E79] focus:bg-white"
-                      />
+                        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#6B9080]">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Cabina FORMA Ocaña</span>
+                        </span>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
-                        Franja Horaria Preferida *
-                      </label>
-                      <select
-                        value={preferredTimeSlot}
-                        onChange={(e) =>
-                          setPreferredTimeSlot(e.target.value as AppointmentTimeSlot)
-                        }
-                        className="w-full px-3 py-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:border-[#B76E79] focus:bg-white"
+                    <div className="pt-2 sm:pt-0 border-t sm:border-t-0 border-[#FDF2F4] flex sm:flex-col items-center sm:items-end justify-between gap-2 shrink-0">
+                      <div className="text-left sm:text-right">
+                        <span className="font-serif text-xl sm:text-2xl font-bold text-[#B76E79]">
+                          {formatCOP(service.price, false)}
+                        </span>
+                        <span className="text-[10px] text-[#2D2926]/50 font-semibold ml-1 sm:ml-0 sm:block">
+                          COP
+                        </span>
+                      </div>
+
+                      <a
+                        href={bookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2D2926] group-hover:bg-[#B76E79] text-white text-xs font-semibold transition-colors shadow-sm"
                       >
-                        <option value="Mañana (8:30 AM - 12:00 PM)">
-                          Mañana (8:30 AM - 12:00 PM)
-                        </option>
-                        <option value="Tarde (2:00 PM - 6:30 PM)">
-                          Tarde (2:00 PM - 6:30 PM)
-                        </option>
-                      </select>
+                        <span>Reservar</span>
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
                     </div>
                   </div>
+                </article>
+              ))}
+            </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
-                      Hora aproximada o comentario opcional
-                    </label>
-                    <input
-                      type="text"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Ej. Preferiblemente a las 4:00 PM"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-sm text-[#2D2926] focus:outline-none focus:border-[#B76E79] focus:bg-white"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold py-4 px-6 rounded-2xl shadow-luxury flex items-center justify-center gap-2 transition-all text-sm sm:text-base"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>Solicitar Cita con Eslen</span>
-                  </button>
-
-                  <p className="text-[11px] text-center text-[#2D2926]/60">
-                    Sin cobros anticipados. Eslen confirmará tu cupo directamente a tu WhatsApp.
+            {/* Bottom Banner Box linking to External Platform */}
+            <div className="bg-[#2D2926] text-[#FAF7F5] rounded-3xl p-5 sm:p-6 border border-[#B76E79]/40 shadow-luxury flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5 text-center sm:text-left">
+                <img
+                  src="/eslen-profile.jpg"
+                  alt="Eslen FORMA"
+                  className="w-14 h-14 rounded-2xl object-cover border-2 border-[#B76E79] shrink-0 hidden sm:block"
+                />
+                <div>
+                  <span className="text-[10px] uppercase tracking-[0.22em] text-[#F4C2C2] font-bold">
+                    AGENDA ONLINE 24/7 • FORMA STUDIO
+                  </span>
+                  <h4 className="font-serif text-xl sm:text-2xl font-bold text-white mt-0.5">
+                    ¿Lista para transformar tu mirada con Eslen?
+                  </h4>
+                  <p className="text-xs text-[#FAF7F5]/75 mt-0.5">
+                    Selecciona tu servicio y horario disponible en segundos desde nuestra plataforma de citas.
                   </p>
-                </form>
-              )}
+                </div>
+              </div>
+
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto shrink-0 bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold px-6 py-3.5 rounded-2xl shadow-luxury inline-flex items-center justify-center gap-2 text-xs sm:text-sm transition-all"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>Ir a Agendar Cita</span>
+                <ExternalLink className="w-4 h-4" />
+              </a>
             </div>
           </div>
         </div>

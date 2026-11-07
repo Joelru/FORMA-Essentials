@@ -33,17 +33,16 @@ import {
   ProductCategory,
   ProductBadge,
   OrderStatus,
-  AppointmentStatus,
   FirebaseCustomConfig
 } from '../types';
 import { PRODUCT_CATEGORIES } from '../data/seedData';
 import {
   formatCOP,
-  buildOrderWhatsAppUrl,
-  buildAppointmentWhatsAppUrl
+  buildOrderWhatsAppUrl
 } from '../utils/format';
 import { getSavedFirebaseConfig, saveFirebaseCustomConfig } from '../lib/firebase';
 import { FormaLogo } from './FormaLogo';
+import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 const ADMIN_SESSION_KEY = 'forma_admin_auth_session_v1';
 
@@ -55,12 +54,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   const {
     products,
     orders,
-    appointments,
     settings,
     visitsCount,
     firebaseStatus,
     updateOrderStatus,
-    updateAppointmentStatus,
     addProduct,
     updateProduct,
     toggleProductPaused,
@@ -82,7 +79,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
-    'analytics' | 'orders' | 'appointments' | 'products' | 'settings'
+    'analytics' | 'orders' | 'products' | 'settings'
   >('analytics');
 
   // Orders Filter
@@ -140,11 +137,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
         )
         .reduce((acc, o) => acc + o.total, 0),
     [orders]
-  );
-
-  const pendingAppointments = useMemo(
-    () => appointments.filter((a) => a.status === 'Pendiente'),
-    [appointments]
   );
 
   // Products ranked by clicks_count descending
@@ -479,23 +471,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
           </button>
 
           <button
-            onClick={() => setActiveTab('appointments')}
-            className={`shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
-              activeTab === 'appointments'
-                ? 'bg-[#B76E79] text-white shadow-sm'
-                : 'bg-white text-[#2D2926] border border-[#F4C2C2]/70 hover:bg-[#FDF2F4]'
-            }`}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Citas Solicitadas ({appointments.length})</span>
-            {pendingAppointments.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-[#6B9080] text-white text-[10px] font-bold">
-                {pendingAppointments.length}
-              </span>
-            )}
-          </button>
-
-          <button
             onClick={() => setActiveTab('products')}
             className={`shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
               activeTab === 'products'
@@ -518,6 +493,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
             <Settings className="w-4 h-4" />
             <span>Redes & Firebase</span>
           </button>
+
+          <a
+            href={settings.bookingUrl || EXTERNAL_BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-white text-[#6B9080] border border-[#6B9080]/40 hover:bg-[#6B9080] hover:text-white transition-all"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Plataforma Externa de Citas ↗</span>
+          </a>
         </div>
 
         {/* =========================================================
@@ -877,102 +862,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
         )}
 
         {/* =========================================================
-            TAB 3: EYEBROW APPOINTMENTS ("Citas Solicitadas")
-           ========================================================= */}
-        {activeTab === 'appointments' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-serif text-2xl font-bold text-[#2D2926]">
-                Solicitudes de Citas con Eslen
-              </h3>
-              <p className="text-xs text-[#2D2926]/65">
-                Confirma la disponibilidad de agenda con un clic directamente al WhatsApp de cada clienta.
-              </p>
-            </div>
-
-            {appointments.length === 0 ? (
-              <div className="bg-white rounded-3xl p-10 text-center border border-[#F4C2C2]">
-                <Calendar className="w-10 h-10 text-[#B76E79] mx-auto mb-2" />
-                <p className="font-serif text-xl font-bold text-[#2D2926]">
-                  Aún no hay solicitudes de citas registradas
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {appointments.map((app) => {
-                  const waUrl = buildAppointmentWhatsAppUrl(app);
-                  return (
-                    <div
-                      key={app.id}
-                      className="bg-white rounded-3xl p-5 border border-[#F4C2C2] shadow-soft flex flex-col justify-between gap-4"
-                    >
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-full bg-[#2D2926] text-white">
-                            #{app.id}
-                          </span>
-                          <select
-                            value={app.status}
-                            onChange={(e) =>
-                              updateAppointmentStatus(
-                                app.id,
-                                e.target.value as AppointmentStatus
-                              )
-                            }
-                            className="px-3 py-1 rounded-full bg-[#FDF2F4] border border-[#F4C2C2] text-xs font-bold text-[#B76E79]"
-                          >
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Confirmada">Confirmada</option>
-                            <option value="Completada">Completada</option>
-                            <option value="Cancelada">Cancelada</option>
-                          </select>
-                        </div>
-
-                        <h4 className="font-serif text-xl font-bold text-[#2D2926]">
-                          {app.customerName}
-                        </h4>
-                        <p className="text-xs font-semibold text-[#B76E79]">
-                          ✦ {app.serviceName} ({app.serviceDuration} •{' '}
-                          {formatCOP(app.servicePrice)})
-                        </p>
-
-                        <div className="bg-[#FAF7F5] rounded-xl p-3 border border-[#F4C2C2]/60 text-xs space-y-1">
-                          <p>
-                            <strong>Fecha solicitada:</strong> {app.preferredDate}
-                          </p>
-                          <p>
-                            <strong>Jornada:</strong> {app.preferredTimeSlot}
-                          </p>
-                          <p>
-                            <strong>WhatsApp:</strong> {app.customerPhone}
-                          </p>
-                          {app.notes && (
-                            <p className="italic text-[#2D2926]/75">
-                              Nota: "{app.notes}"
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <a
-                        href={waUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full bg-[#6B9080] hover:bg-[#57786a] text-white text-xs font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors"
-                      >
-                        <Phone className="w-4 h-4" />
-                        <span>Confirmar Disponibilidad por WhatsApp</span>
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* =========================================================
-            TAB 4: COMPLETE PRODUCT CRUD
+            TAB 3: COMPLETE PRODUCT CRUD
            ========================================================= */}
         {activeTab === 'products' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
