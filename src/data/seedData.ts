@@ -222,7 +222,7 @@ export const INITIAL_SETTINGS: StoreSettings = {
   whatsappNumber: '3154829104',
   nequiNumber: '3154829104',
   daviplataNumber: '3154829104',
-  announcementText: '✨ Entregas rápidas en Ocaña • Pago Contra Entrega, Nequi o Daviplata',
+  announcementText: '🛵 Domicilio GRATIS en Ocaña a partir de las 5:00 PM • Pagos Contra Entrega, Nequi o Daviplata',
   bookingUrl: 'https://beautysitesbd.web.app/booking/framestudio',
   ntfyTopic: 'forma-eslen-ocana-alertas',
   notificationsEnabled: true

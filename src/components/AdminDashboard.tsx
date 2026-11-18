@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Lock,
   LogOut,
@@ -48,6 +48,7 @@ import {
   sendNtfyPush,
   showBrowserSystemNotification
 } from '../utils/notifications';
+import { compressImageFile } from '../utils/image';
 
 const ADMIN_SESSION_KEY = 'forma_admin_auth_session_v1';
 
@@ -107,6 +108,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   // Store Settings Form State
   const [settingsForm, setSettingsForm] = useState(settings);
   const [settingsSavedMsg, setSettingsSavedMsg] = useState('');
+
+  useEffect(() => {
+    setSettingsForm(settings);
+  }, [settings]);
   const [testPushStatus, setTestPushStatus] = useState<string>('');
   const [browserPermStatus, setBrowserPermStatus] = useState<string>(() =>
     typeof window !== 'undefined' && 'Notification' in window
@@ -187,17 +192,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
     setIsAuthenticated(false);
   };
 
-  // Image File to Base64 Upload Handler
-  const handleImageFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Image File to Compressed Base64 Upload Handler
+  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string') {
-        setProdImage(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressedDataUrl = await compressImageFile(file, 720, 0.76);
+      setProdImage(compressedDataUrl);
+    } catch {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setProdImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const startEditProduct = (product: Product) => {
@@ -389,13 +399,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
               </span>
               <span
                 className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                  firebaseStatus.isConnected
+                  firebaseStatus.error
+                    ? 'bg-red-50 text-red-700 border border-red-200'
+                    : firebaseStatus.isConnected
                     ? 'bg-[#6B9080]/15 text-[#6B9080]'
                     : 'bg-[#FDF2F4] text-[#B76E79]'
                 }`}
+                title={firebaseStatus.error || undefined}
               >
                 <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
-                {firebaseStatus.isConnected
+                {firebaseStatus.error
+                  ? 'Error de Sincronización Cloud'
+                  : firebaseStatus.isConnected
                   ? `Firebase Cloud (${firebaseStatus.projectId})`
                   : 'Persistencia Local Sincronizada'}
               </span>
@@ -981,26 +996,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                             <p className="font-bold uppercase tracking-wider text-[#B76E79] text-[10px]">
                               Productos Comprados
                             </p>
-                            {order.items.map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="flex items-center justify-between py-1 border-b border-[#F4C2C2]/30 last:border-0"
-                              >
-                                <div className="flex items-center gap-2.5">
-                                  <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-8 h-8 rounded-lg object-cover"
-                                  />
+                            {order.items.map((item, idx) => {
+                              const resolvedImage =
+                                products.find((p) => p.id === item.productId)?.image ||
+                                item.image;
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex items-center justify-between py-1 border-b border-[#F4C2C2]/30 last:border-0"
+                                >
+                                  <div className="flex items-center gap-2.5">
+                                    {resolvedImage ? (
+                                      <img
+                                        src={resolvedImage}
+                                        alt={item.name}
+                                        className="w-8 h-8 rounded-lg object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-8 h-8 rounded-lg bg-[#FDF2F4] border border-[#F4C2C2] flex items-center justify-center text-[#B76E79]">
+                                        <ShoppingBag className="w-4 h-4" />
+                                      </div>
+                                    )}
+                                    <span className="font-semibold text-[#2D2926]">
+                                      {item.quantity}x {item.name}
+                                    </span>
+                                  </div>
                                   <span className="font-semibold text-[#2D2926]">
-                                    {item.quantity}x {item.name}
+                                    {formatCOP(item.price * item.quantity)}
                                   </span>
                                 </div>
-                                <span className="font-semibold text-[#2D2926]">
-                                  {formatCOP(item.price * item.quantity)}
-                                </span>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
 
                           <div className="pt-3 mt-2 border-t border-[#F4C2C2] flex items-center justify-between">

@@ -15,7 +15,8 @@ import {
   FileText,
   Sparkles,
   MessageCircle,
-  ShieldCheck
+  ShieldCheck,
+  Truck
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { OCANA_NEIGHBORHOODS } from '../data/seedData';
@@ -45,6 +46,7 @@ export const CartDrawer: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [acceptedTerms, setAcceptedTerms] = useState(true);
   const [formError, setFormError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
   if (!isCartOpen) return null;
@@ -59,8 +61,9 @@ export const CartDrawer: React.FC = () => {
     }, 300);
   };
 
-  const handleConfirmOrder = (e: React.FormEvent) => {
+  const handleConfirmOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setFormError('');
 
     if (cart.length === 0) {
@@ -113,21 +116,32 @@ export const CartDrawer: React.FC = () => {
       return;
     }
 
-    const created = createOrder({
-      customerName: trimmedName,
-      customerPhone: cleanPhone(customerPhone),
-      neighborhood,
-      address,
-      paymentMethod,
-      notes,
-    });
+    try {
+      setIsSubmitting(true);
+      const created = await createOrder({
+        customerName: trimmedName,
+        customerPhone: cleanPhone(customerPhone),
+        neighborhood,
+        address,
+        paymentMethod,
+        notes,
+      });
 
-    setConfirmedOrder(created);
-    setStep('confirmed');
-    setCustomerName('');
-    setCustomerPhone('');
-    setAddress('');
-    setNotes('');
+      setConfirmedOrder(created);
+      setStep('confirmed');
+      setCustomerName('');
+      setCustomerPhone('');
+      setAddress('');
+      setNotes('');
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'No pudimos guardar tu pedido en este momento. Por favor intenta de nuevo.';
+      setFormError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -287,9 +301,9 @@ export const CartDrawer: React.FC = () => {
                 <div className="shrink-0 px-4 pt-3.5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-5 bg-white border-t border-[#F4C2C2]/60 space-y-3">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-xs text-[#2D2926]/70">
-                      <span>Despacho en Ocaña (Casco Urbano)</span>
+                      <span>Domicilio en Ocaña (Casco Urbano)</span>
                       <span className="font-semibold text-[#6B9080]">
-                        Coordinado al confirmar
+                        GRATIS desde las 5 PM
                       </span>
                     </div>
                     <div className="flex items-center justify-between pt-1.5 border-t border-[#FDF2F4]">
@@ -393,6 +407,16 @@ export const CartDrawer: React.FC = () => {
                   </div>
                   <p className="text-[11px] text-[#2D2926]/55 mt-1">
                     Te escribiremos por WhatsApp para coordinar la entrega de tu pedido.
+                  </p>
+                </div>
+
+                {/* Free Delivery Reminder */}
+                <div className="p-2.5 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] flex items-center gap-2.5 text-xs text-[#2D2926]/85">
+                  <div className="w-7 h-7 rounded-lg bg-[#2D2926] text-[#F4C2C2] flex items-center justify-center shrink-0">
+                    <Truck className="w-3.5 h-3.5" />
+                  </div>
+                  <p className="text-[11px] leading-snug">
+                    <strong className="text-[#B76E79] font-bold">Domicilio GRATIS en Ocaña:</strong> Entregas especiales a partir de las 5:00 PM.
                   </p>
                 </div>
 
@@ -531,10 +555,19 @@ export const CartDrawer: React.FC = () => {
               <div className="shrink-0 px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:p-5 bg-white border-t border-[#F4C2C2]/60">
                 <button
                   type="submit"
-                  className="w-full bg-[#B76E79] hover:bg-[#9A5660] text-white font-semibold py-3.5 sm:py-4 px-6 rounded-2xl shadow-luxury flex items-center justify-center gap-2 transition-all active:scale-95 text-sm sm:text-base"
+                  disabled={isSubmitting}
+                  className={`w-full font-semibold py-3.5 sm:py-4 px-6 rounded-2xl shadow-luxury flex items-center justify-center gap-2 transition-all text-sm sm:text-base ${
+                    isSubmitting
+                      ? 'bg-[#B76E79]/70 text-white cursor-wait'
+                      : 'bg-[#B76E79] hover:bg-[#9A5660] text-white active:scale-95'
+                  }`}
                 >
                   <Sparkles className="w-4 h-4 shrink-0" />
-                  <span>Confirmar Pedido • {formatCOP(cartTotal)}</span>
+                  <span>
+                    {isSubmitting
+                      ? 'Registrando Pedido...'
+                      : `Confirmar Pedido • ${formatCOP(cartTotal)}`}
+                  </span>
                 </button>
               </div>
             </form>

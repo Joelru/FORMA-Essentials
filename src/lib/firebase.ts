@@ -6,7 +6,8 @@ import {
   doc,
   setDoc,
   onSnapshot,
-  getDoc
+  getDoc,
+  runTransaction
 } from 'firebase/firestore';
 import { FirebaseCustomConfig } from '../types';
 
@@ -83,4 +84,4 @@ export function getFirebaseDb(): { db: Firestore | null; isConnected: boolean; p
   }
 }
 
-export { doc, setDoc, onSnapshot, getDoc };
+export { doc, setDoc, onSnapshot, getDoc, runTransaction };

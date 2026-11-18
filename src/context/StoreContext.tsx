@@ -20,8 +20,9 @@ import {
   INITIAL_APPOINTMENTS,
   INITIAL_SETTINGS
 } from '../data/seedData';
-import { getFirebaseDb, doc, setDoc, onSnapshot, getDoc } from '../lib/firebase';
+import { getFirebaseDb, doc, setDoc, onSnapshot, getDoc, runTransaction } from '../lib/firebase';
 import { playNotificationChime } from '../utils/format';
+import { compressBase64DataUrl } from '../utils/image';
 import {
   notifyOwnerBookingRedirect,
   notifyOwnerNewOrder,
@@ -73,7 +74,7 @@ interface StoreContextType {
   setIsCartOpen: (open: boolean) => void;
   selectedProductModal: Product | null;
   setSelectedProductModal: (product: Product | null) => void;
-  firebaseStatus: { isConnected: boolean; projectId?: string; syncing: boolean };
+  firebaseStatus: { isConnected: boolean; projectId?: string; syncing: boolean; error?: string | null };
   latestAlert: { type: 'order' | 'appointment'; title: string; subtitle: string } | null;
   dismissAlert: () => void;
 
@@ -110,7 +111,7 @@ interface StoreContextType {
   saveCookieConsent: (prefs: Omit<CookiePreferences, 'updatedAt'>) => void;
 
   // Checkout & Orders
-  createOrder: (input: CreateOrderInput) => Order;
+  createOrder: (input: CreateOrderInput) => Promise<Order>;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   markAllOrdersReviewed: () => void;
 
@@ -131,6 +132,34 @@ interface StoreContextType {
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
+
+function sanitizeOrdersForStorage(list: Order[]): Order[] {
+  return list.map((order) => ({
+    ...order,
+    items: (order.items || []).map((item) => ({
+      ...item,
+      // No duplicar imágenes base64 pesadas dentro de cada orden (se resuelven desde el catálogo por productId)
+      image: item.image && item.image.startsWith('data:') ? '' : item.image || '',
+    })),
+  }));
+}
+
+async function sanitizeProductsForStorage(list: Product[]): Promise<Product[]> {
+  let changed = false;
+  const result = await Promise.all(
+    list.map(async (prod) => {
+      if (prod.image && prod.image.startsWith('data:image/') && prod.image.length > 120_000) {
+        const compressed = await compressBase64DataUrl(prod.image, 720, 0.74);
+        if (compressed !== prod.image) {
+          changed = true;
+          return { ...prod, image: compressed };
+        }
+      }
+      return prod;
+    })
+  );
+  return changed ? result : list;
+}
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
@@ -191,9 +220,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     isConnected: boolean;
     projectId?: string;
     syncing: boolean;
+    error?: string | null;
   }>(() => {
     const { isConnected, projectId } = getFirebaseDb();
-    return { isConnected, projectId, syncing: false };
+    return { isConnected, projectId, syncing: false, error: null };
   });
 
   const isRemoteUpdate = useRef(false);
@@ -209,21 +239,36 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       bookingRedirects?: BookingRedirectItem[];
       settings?: StoreSettings;
       visitsCount?: number;
-    }) => {
+    }): Promise<boolean> => {
       const { db, isConnected } = getFirebaseDb();
-      if (!isConnected || !db) return;
+      if (!isConnected || !db) return false;
       try {
+        const sanitizedPayload = { ...payload };
+        if (sanitizedPayload.orders) {
+          sanitizedPayload.orders = sanitizeOrdersForStorage(sanitizedPayload.orders);
+        }
+        if (sanitizedPayload.products) {
+          sanitizedPayload.products = await sanitizeProductsForStorage(
+            sanitizedPayload.products
+          );
+        }
+
         const storeDocRef = doc(db, 'forma_essentials', 'live_store_data');
         await setDoc(
           storeDocRef,
           {
-            ...payload,
+            ...sanitizedPayload,
             updatedAt: new Date().toISOString(),
           },
           { merge: true }
         );
+        setFirebaseStatus((prev) => (prev.error ? { ...prev, error: null } : prev));
+        return true;
       } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Error de sincronización';
         console.warn('Error sincronizando con Firestore:', err);
+        setFirebaseStatus((prev) => ({ ...prev, error: msg }));
+        return false;
       }
     },
     []
@@ -451,6 +496,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       },
       (err) => {
         console.warn('Firestore listener error:', err);
+        setFirebaseStatus((prev) => ({
+          ...prev,
+          error: err?.message || 'Error escuchando Firestore',
+        }));
       }
     );
 
@@ -460,32 +509,42 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const syncAllToFirebase = useCallback(async (): Promise<boolean> => {
     const { db, isConnected, projectId } = getFirebaseDb();
-    setFirebaseStatus({ isConnected, projectId, syncing: true });
+    setFirebaseStatus({ isConnected, projectId, syncing: true, error: null });
     if (!isConnected || !db) {
-      setFirebaseStatus({ isConnected: false, syncing: false });
+      setFirebaseStatus({ isConnected: false, syncing: false, error: null });
       return false;
     }
     try {
       const storeDocRef = doc(db, 'forma_essentials', 'live_store_data');
+      const compressedProducts = await sanitizeProductsForStorage(products);
+      const cleanOrders = sanitizeOrdersForStorage(orders);
+
+      if (compressedProducts !== products) {
+        setProducts(compressedProducts);
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(compressedProducts));
+      }
+
       await setDoc(
         storeDocRef,
         {
-          products,
-          orders,
+          products: compressedProducts,
+          orders: cleanOrders,
           appointments,
+          bookingRedirects,
           settings,
           visitsCount,
           updatedAt: new Date().toISOString(),
         },
         { merge: true }
       );
-      setFirebaseStatus({ isConnected: true, projectId, syncing: false });
+      setFirebaseStatus({ isConnected: true, projectId, syncing: false, error: null });
       return true;
-    } catch {
-      setFirebaseStatus({ isConnected: true, projectId, syncing: false });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error sincronizando con Firebase';
+      setFirebaseStatus({ isConnected: true, projectId, syncing: false, error: msg });
       return false;
     }
-  }, [products, orders, appointments, settings, visitsCount]);
+  }, [products, orders, appointments, bookingRedirects, settings, visitsCount]);
 
   // 1. Silent Click Tracking on Product ("Ver Detalles" or "Agregar al Carrito") & Booking Redirect Tracking
   const trackProductClick = useCallback(
@@ -700,7 +759,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // 3. Create Order & Deduct Stock & Trigger Admin Notification
   const createOrder = useCallback(
-    (input: CreateOrderInput): Order => {
+    async (input: CreateOrderInput): Promise<Order> => {
       const randomNum = Math.floor(1025 + Math.random() * 8970);
       const orderId = `ORD-${randomNum}`;
 
@@ -717,7 +776,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           name: item.product.name,
           price: item.product.price,
           quantity: item.quantity,
-          image: item.product.image,
+          // Nunca duplicar base64 en el documento de orden para evitar superar 1 MiB en Firestore
+          image: item.product.image.startsWith('data:') ? '' : item.product.image,
         })),
         total: cartTotal,
         status: 'Pendiente por Despachar',
@@ -725,14 +785,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isNew: true,
       };
 
-      // Update orders
-      const updatedOrders = [newOrder, ...orders];
-      prevOrdersCount.current = updatedOrders.length;
-      setOrders(updatedOrders);
-      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(updatedOrders));
+      // Pre-comprimir cualquier imagen base64 pesada del catálogo antes de la transacción
+      const compressedLocalProducts = await sanitizeProductsForStorage(products);
+      const compressedImagesById = new Map(
+        compressedLocalProducts.map((p) => [p.id, p.image])
+      );
 
-      // Deduct stock from products
-      const updatedProducts = products.map((prod) => {
+      let finalOrders = sanitizeOrdersForStorage([newOrder, ...orders]);
+      let finalProducts = compressedLocalProducts.map((prod) => {
         const boughtItem = cart.find((c) => c.product.id === prod.id);
         if (!boughtItem) return prod;
         const nextStock = Math.max(0, prod.stock - boughtItem.quantity);
@@ -742,11 +802,80 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           paused: nextStock === 0 ? true : prod.paused,
         };
       });
-      setProducts(updatedProducts);
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(updatedProducts));
 
-      // Sync with Firestore
-      pushToFirestore({ orders: updatedOrders, products: updatedProducts });
+      const { db, isConnected } = getFirebaseDb();
+      if (isConnected && db) {
+        const storeDocRef = doc(db, 'forma_essentials', 'live_store_data');
+        try {
+          const txResult = await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(storeDocRef);
+            const cloudData = snap.exists() ? snap.data() : {};
+
+            const cloudOrders: Order[] = Array.isArray(cloudData.orders)
+              ? sanitizeOrdersForStorage(cloudData.orders as Order[])
+              : [];
+            const cloudProductsRaw: Product[] = Array.isArray(cloudData.products)
+              ? (cloudData.products as Product[])
+              : compressedLocalProducts;
+
+            const nextOrders = [
+              newOrder,
+              ...cloudOrders.filter((o) => o.id !== newOrder.id),
+            ];
+
+            const nextProducts = cloudProductsRaw.map((prod) => {
+              const safeImage =
+                prod.image &&
+                prod.image.startsWith('data:image/') &&
+                prod.image.length > 120_000
+                  ? compressedImagesById.get(prod.id) || prod.image
+                  : prod.image;
+
+              const boughtItem = cart.find((c) => c.product.id === prod.id);
+              if (!boughtItem) {
+                return safeImage !== prod.image ? { ...prod, image: safeImage } : prod;
+              }
+              const nextStock = Math.max(0, prod.stock - boughtItem.quantity);
+              return {
+                ...prod,
+                image: safeImage,
+                stock: nextStock,
+                paused: nextStock === 0 ? true : prod.paused,
+              };
+            });
+
+            transaction.set(
+              storeDocRef,
+              {
+                orders: nextOrders,
+                products: nextProducts,
+                updatedAt: new Date().toISOString(),
+              },
+              { merge: true }
+            );
+
+            return { nextOrders, nextProducts };
+          });
+
+          finalOrders = txResult.nextOrders;
+          finalProducts = txResult.nextProducts;
+          setFirebaseStatus((prev) => (prev.error ? { ...prev, error: null } : prev));
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : 'Error guardando el pedido en Firebase';
+          console.error('Error guardando pedido en Firestore:', err);
+          setFirebaseStatus((prev) => ({ ...prev, error: msg }));
+          throw new Error(
+            'No pudimos registrar el pedido en el servidor. Verifica tu conexión e inténtalo de nuevo.'
+          );
+        }
+      }
+
+      prevOrdersCount.current = finalOrders.length;
+      setOrders(finalOrders);
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(finalOrders));
+
+      setProducts(finalProducts);
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(finalProducts));
 
       // Send instant push notification to Owner's Phone (ntfy.sh) + Browser Notification + Sound
       notifyOwnerNewOrder(newOrder, settings);
@@ -765,7 +894,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearCart();
       return newOrder;
     },
-    [cart, cartTotal, orders, products, settings, pushToFirestore, clearCart]
+    [cart, cartTotal, orders, products, settings, clearCart]
   );
 
   const updateOrderStatus = useCallback(
