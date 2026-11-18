@@ -4,6 +4,7 @@ import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { CatalogSection } from './components/CatalogSection';
 import { BookingSection } from './components/BookingSection';
+import { BookingModal } from './components/BookingModal';
 import { ProductDetailModal } from './components/ProductDetailModal';
 import { CartDrawer } from './components/CartDrawer';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -73,6 +74,7 @@ export const App: React.FC = () => {
 
         {/* Interactive Modals, Drawers, Animations & Cookie/Legal Consent */}
         <ProductDetailModal />
+        <BookingModal />
         <CartDrawer />
         <LegalModal />
         <CookieConsentBanner />

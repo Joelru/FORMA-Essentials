@@ -77,6 +77,10 @@ interface StoreContextType {
   setIsCartOpen: (open: boolean) => void;
   selectedProductModal: Product | null;
   setSelectedProductModal: (product: Product | null) => void;
+  isBookingModalOpen: boolean;
+  bookingPreselectedServiceId: string | null;
+  openBookingModal: (serviceId?: string) => void;
+  closeBookingModal: () => void;
   firebaseStatus: { isConnected: boolean; projectId?: string; syncing: boolean; error?: string | null };
   latestAlert: { type: 'order' | 'appointment'; title: string; subtitle: string } | null;
   dismissAlert: () => void;
@@ -206,6 +210,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProductModal, setSelectedProductModal] = useState<Product | null>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingPreselectedServiceId, setBookingPreselectedServiceId] = useState<string | null>(
+    null
+  );
   const [isCartBumping, setIsCartBumping] = useState(false);
   const [flyAnimations, setFlyAnimations] = useState<FlyAnimationItem[]>([]);
   const [legalModalTab, setLegalModalTab] = useState<LegalTabType>(null);
@@ -1192,6 +1200,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLatestAlert(null);
   }, []);
 
+  const openBookingModal = useCallback((serviceId?: string) => {
+    if (serviceId) {
+      setBookingPreselectedServiceId(serviceId);
+    }
+    setIsBookingModalOpen(true);
+  }, []);
+
+  const closeBookingModal = useCallback(() => {
+    setIsBookingModalOpen(false);
+  }, []);
+
   return (
     <StoreContext.Provider
       value={{
@@ -1207,6 +1226,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setIsCartOpen,
         selectedProductModal,
         setSelectedProductModal,
+        isBookingModalOpen,
+        bookingPreselectedServiceId,
+        openBookingModal,
+        closeBookingModal,
         firebaseStatus,
         latestAlert,
         dismissAlert,
