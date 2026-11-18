@@ -9,7 +9,9 @@ import {
   ExternalLink,
   ArrowUpRight,
   CheckCircle2,
-  MapPin
+  MapPin,
+  Droplets,
+  Info
 } from 'lucide-react';
 import { BROW_SERVICES } from '../data/seedData';
 import { useStore } from '../context/StoreContext';
@@ -35,14 +37,14 @@ export const BookingSection: React.FC = () => {
             Cabina Especializada en Ocaña • FORMA Studio
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#2D2926]">
-            Diseño de Cejas &amp; Visagismo por{' '}
+            Diseño de Cejas by{' '}
             <span className="italic text-[#B76E79]">Eslen</span>
           </h2>
           <p className="mt-3 text-sm sm:text-base text-[#2D2926]/75 leading-relaxed">
-            Tus cejas son el marco arquitectónico de tu rostro. En{' '}
-            <strong className="text-[#2D2926]">FORMA</strong> trabajamos bajo diagnóstico
-            personalizado para realzar tu expresión natural. Consulta nuestros rituales y elige tu
-            día y hora disponible directamente en nuestra plataforma oficial de reservas.
+            Realza tu mirada en{' '}
+            <strong className="text-[#2D2926]">FORMA</strong> con diseño personalizado de cejas,
+            depilación en cera o con Gillette y pigmentación semipermanente. Consulta nuestras tarifas
+            oficiales, nota de garantía y elige tu cita disponible en nuestra plataforma de reservas.
           </p>
         </div>
 
@@ -79,8 +81,8 @@ export const BookingSection: React.FC = () => {
                     Eslen — FORMA Studio
                   </h3>
                   <p className="text-xs sm:text-sm text-[#FAF7F5]/90 mt-1 leading-relaxed">
-                    Especialista en visagismo áureo, laminado profesional (Brow Lamination),
-                    sombreado híbrido y recuperación capilar de cejas.
+                    Especialista en diseño personalizado de cejas, depilación en cera o Gillette
+                    y pigmentación semipermanente. Realza tu mirada.
                   </p>
                 </div>
               </div>
@@ -90,15 +92,15 @@ export const BookingSection: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-2.5 text-xs text-[#2D2926]/85 font-medium">
                   <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
                     <ShieldCheck className="w-4 h-4 text-[#6B9080] shrink-0" />
-                    <span>Protocolos de bioseguridad clínica 100% esterilizados</span>
+                    <span>Garantía de 4 días a partir de la realización del servicio</span>
                   </div>
                   <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
                     <Award className="w-4 h-4 text-[#B76E79] shrink-0" />
-                    <span>Diagnóstico anatómico según la estructura de tu rostro</span>
+                    <span>Depilación en cera o con Gillette según tu preferencia</span>
                   </div>
                   <div className="flex items-center gap-2.5 bg-[#FAF7F5] px-3.5 py-2.5 rounded-xl border border-[#F4C2C2]/50">
                     <Heart className="w-4 h-4 text-[#B76E79] shrink-0" />
-                    <span>Acabado Clean Girl armónico, natural y duradero</span>
+                    <span>Pigmentación semipermanente con duración habitual de 5 a 15 días</span>
                   </div>
                 </div>
 
@@ -134,10 +136,10 @@ export const BookingSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-widest text-[#B76E79]">
-                  Menú de Servicios en Cabina
+                  Menú Oficial de Servicios • Ocaña
                 </span>
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#2D2926]">
-                  Rituales de Cejas por Eslen
+                  Diseño de Cejas by Eslen
                 </h3>
               </div>
               <a
@@ -177,8 +179,8 @@ export const BookingSection: React.FC = () => {
 
                       <div className="pt-1 flex flex-wrap items-center gap-3">
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#2D2926]/70 bg-[#FAF7F5] px-2.5 py-1 rounded-lg border border-[#F4C2C2]/40">
-                          <Clock className="w-3.5 h-3.5 text-[#B76E79]" />
-                          <span>Duración: {service.duration}</span>
+                          <ShieldCheck className="w-3.5 h-3.5 text-[#B76E79]" />
+                          <span>{service.duration}</span>
                         </span>
 
                         <span className="inline-flex items-center gap-1 text-xs font-medium text-[#6B9080]">
@@ -214,6 +216,55 @@ export const BookingSection: React.FC = () => {
                   </div>
                 </article>
               ))}
+            </div>
+
+            {/* Official Note & Aftercare Guide from Eslen */}
+            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2] shadow-soft space-y-4">
+              <div className="p-4 rounded-2xl bg-[#FDF2F4] border border-[#F4C2C2]/80 space-y-1.5">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#B76E79]">
+                  <Info className="w-4 h-4 shrink-0" />
+                  <span>Nota de Duración y Garantía</span>
+                </div>
+                <p className="text-xs sm:text-sm text-[#2D2926]/85 leading-relaxed">
+                  La duración habitual del diseño de cejas varía entre <strong>5 y 15 días</strong>,
+                  dependiendo del tipo de piel y los cuidados posteriores. Por este motivo, la{' '}
+                  <strong>garantía ofrecida es de 4 días</strong> a partir de la realización del servicio.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-serif text-xl font-bold text-[#2D2926]">
+                  Cuidados Posteriores
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-[#FAF7F5] border border-[#F4C2C2]/60 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] text-[#B76E79] flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#2D2926]">Primeras 24 horas</p>
+                      <p className="text-xs text-[#2D2926]/75 leading-relaxed mt-0.5">
+                        Durante las primeras 24 horas el pigmento se adhiere a tu piel, así que no
+                        toques ni mojes la zona.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-[#FAF7F5] border border-[#F4C2C2]/60 flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] text-[#B76E79] flex items-center justify-center shrink-0">
+                      <Droplets className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-[#2D2926]">Secado y rutina facial</p>
+                      <p className="text-xs text-[#2D2926]/75 leading-relaxed mt-0.5">
+                        Si sudas o te mojas, seca a toques suaves con una toalla completamente seca, y
+                        posterior a estas 24 horas no frotes tus cejas cuando laves tu rostro ni
+                        apliques productos oleosos.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Bottom Banner Box linking to External Platform */}

@@ -170,7 +170,7 @@ export const LegalModal: React.FC = () => {
                   5. Políticas de Citas en Cabina con Eslen
                 </h3>
                 <p>
-                  Las solicitudes de citas para Diseño de Cejas, Visagismo y Laminado se confirman vía WhatsApp según disponibilidad de agenda. Te agradecemos asistir puntualmente o notificar cualquier reprogramación con mínimo 4 horas de anticipación.
+                  Las solicitudes de citas para Diseño de Cejas, Depilación en Cera o Gillette y Pigmentación Semipermanente se confirman vía WhatsApp o plataforma de agenda según disponibilidad. La duración habitual del diseño varía entre 5 y 15 días según el tipo de piel y cuidados posteriores, con una garantía de 4 días a partir de la realización del servicio. Te agradecemos asistir puntualmente o notificar cualquier reprogramación con anticipación.
                 </p>
               </div>
             </div>

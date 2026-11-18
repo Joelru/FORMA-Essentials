@@ -166,46 +166,45 @@ export const INITIAL_PRODUCTS: Product[] = [
 export const BROW_SERVICES: BrowService[] = [
   {
     id: 'srv-01',
-    name: 'Diseño de Cejas + Sombreado Semipermanente',
-    duration: '45 min',
-    price: 35000,
-    tag: 'El Más Solicitado',
+    name: 'Diseño + Depilación en cera + Pigmentación semipermanente',
+    duration: 'Duración pigmento: 5 a 15 días • Garantía: 4 días',
+    price: 20000,
+    tag: 'Servicio Completo',
     description:
-      'Mapeo facial personalizado (visagismo áureo), diseño arquitectónico según tus facciones, depilación suave de alta precisión y sombreado híbrido con efecto empolvado natural.'
+      'Diseño personalizado de cejas según tus facciones, depilación limpia en cera y pigmentación semipermanente para definir y realzar tu mirada.'
   },
   {
     id: 'srv-02',
-    name: 'Laminado de Cejas (Brow Lamination) + Botox Nutritivo',
-    duration: '60 min',
-    price: 60000,
-    tag: 'Tendencia Clean Girl',
+    name: 'Diseño + Depilación con Gillette + Pigmentación semipermanente',
+    duration: 'Duración pigmento: 5 a 15 días • Garantía: 4 días',
+    price: 16000,
+    tag: 'Más Solicitado',
     description:
-      'Alineación direccionada del vello para lograr cejas más abundantes, definidas y estilizadas hasta por 6 semanas. Incluye diseño, perfilado e hidratación profunda con keratina y vitaminas.'
+      'Diseño personalizado de cejas, perfilado preciso con Gillette y pigmentación semipermanente para un acabado definido y natural.'
   },
   {
     id: 'srv-03',
-    name: 'Depilación con Hilo/Cera + Diseño de Visagismo',
-    duration: '30 min',
-    price: 22000,
+    name: 'Diseño + Depilación en cera',
+    duration: 'Garantía: 4 días',
+    price: 10000,
     description:
-      'Diseño simétrico respetando el grosor natural de tu ceja con técnica mixta hipoalergénica y gel calmante post-depilación de aloe y rosas.'
+      'Diseño personalizado de cejas respetando tu forma natural con depilación suave y definida en cera.'
   },
   {
     id: 'srv-04',
-    name: 'Mantenimiento & Perfilado FORMA',
-    duration: '25 min',
-    price: 18000,
+    name: 'Diseño + Depilación con Gillette',
+    duration: 'Garantía: 4 días',
+    price: 8000,
     description:
-      'Ideal para clientas frecuentes (cada 15 a 20 días) que desean conservar la estructura impecable de su diseño previo e hidratar el folículo.'
+      'Diseño personalizado de cejas y perfilado limpio y preciso con Gillette para mantener tu mirada impecable.'
   },
   {
     id: 'srv-05',
-    name: 'Experiencia FORMA (Laminado + Diseño + Sombreado)',
-    duration: '75 min',
-    price: 78000,
-    tag: 'VIP Studio',
+    name: 'Diseño + Pigmentación',
+    duration: 'Duración pigmento: 5 a 15 días • Garantía: 4 días',
+    price: 10000,
     description:
-      'Transformación total de la mirada por Eslen: Brow Lamination, mapeo arquitectónico, sombreado semipermanente a medida, parche de colágeno en ojeras y obsequio de cepillo fijador.'
+      'Diseño personalizado de cejas combinado con pigmentación semipermanente para aportar mayor definición y marco a tu mirada.'
   }
 ];
 

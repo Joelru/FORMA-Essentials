@@ -91,10 +91,10 @@ export const HeroSection: React.FC = () => {
   ];
 
   const marqueeItems = [
-    'DISEÑO ARQUITECTÓNICO DE CEJAS POR ESLEN',
+    'DISEÑO DE CEJAS BY ESLEN • REALZA TU MIRADA',
     'AGENDA TU CITA ONLINE EN SEGUNDOS',
+    'DEPILACIÓN EN CERA O GILLETTE & PIGMENTACIÓN',
     'CUIDADO DE CEJAS, PESTAÑAS & ROSTRO',
-    'VISAGISMO ÁUREO & BROW LAMINATION',
     'ENTREGAS RÁPIDAS EN OCAÑA',
   ];
 
@@ -185,7 +185,7 @@ export const HeroSection: React.FC = () => {
                 >
                   <img
                     src="/hero-brows.jpg"
-                    alt="Diseño Profesional de Cejas, Laminado y Visagismo por Eslen en Ocaña"
+                    alt="Diseño de Cejas, Depilación y Pigmentación Semipermanente by Eslen en Ocaña"
                     className="w-full h-full object-cover object-center scale-[1.02] transition-transform duration-700 hover:scale-105"
                     fetchPriority="high"
                   />
@@ -251,7 +251,7 @@ export const HeroSection: React.FC = () => {
 
                       <div className="min-w-0 text-white">
                         <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-[#F4C2C2] font-bold uppercase tracking-[0.18em]">
-                          <span>✦ Visagismo &amp; Laminado</span>
+                          <span>✦ Diseño de Cejas by Eslen</span>
                         </div>
                         <p className="font-serif text-xl sm:text-3xl font-bold leading-tight text-white drop-shadow-sm">
                           Miradas reales, esculpidas a tu medida.
@@ -552,7 +552,7 @@ export const HeroSection: React.FC = () => {
                 onClick={() => scrollTo('citas-eslen')}
                 className="text-[11px] font-semibold text-[#B76E79] hover:text-[#2D2926] bg-white/90 px-3 py-1.5 rounded-full border border-[#F4C2C2] transition-colors"
               >
-                ✦ Ver precios de Cejas y Laminado ↓
+                ✦ Ver precios de Diseño de Cejas ↓
               </button>
               <button
                 type="button"

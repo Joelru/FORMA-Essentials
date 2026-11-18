@@ -24,7 +24,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
 
     const descriptionText = selectedProductModal
       ? `${selectedProductModal.name} en Ocaña ($${selectedProductModal.price.toLocaleString('es-CO')} COP). ${selectedProductModal.description} Entrega rápida en Ocaña, pago contra entrega, Nequi o Daviplata.`
-      : 'FORMA Estudio & Cosmética por Eslen en Ocaña, Norte de Santander. Diseño profesional de cejas, visagismo, laminado (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro con domicilio rápido.';
+      : 'FORMA Estudio & Cosmética por Eslen en Ocaña, Norte de Santander. Diseño de cejas, depilación en cera o Gillette, pigmentación semipermanente y productos de cuidado para cejas, pestañas y rostro con domicilio rápido.';
 
     const setMeta = (selector: string, attr: string, content: string) => {
       let el = document.querySelector<HTMLMetaElement>(selector);
@@ -83,7 +83,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           name: 'FORMA — Estudio & Cosmética por Eslen',
           alternateName: ['FORMA Estudio y Cosmética', 'FORMA por Eslen Ocaña', 'FORMA Essentials'],
           description:
-            'Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado de cejas (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro en Ocaña, Norte de Santander.',
+            'Estudio especializado en diseño de cejas, depilación en cera o con Gillette, pigmentación semipermanente y productos de cuidado para cejas, pestañas y rostro en Ocaña, Norte de Santander.',
           url: `${baseUrl}/`,
           logo: `${baseUrl}/forma-logo.png`,
           image: [
@@ -98,7 +98,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           founder: {
             '@type': 'Person',
             name: settings.ownerName || 'Eslen',
-            jobTitle: 'Especialista en Visagismo y Diseño de Cejas (Brow Artist)',
+            jobTitle: 'Especialista en Diseño de Cejas y Pigmentación Semipermanente',
             image: `${baseUrl}/eslen-profile.jpg`,
           },
           address: {
@@ -219,10 +219,10 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           mainEntity: [
             {
               '@type': 'Question',
-              name: '¿Dónde agendar diseño y laminado de cejas en Ocaña, Norte de Santander?',
+              name: '¿Qué servicios de diseño de cejas ofrece Eslen en Ocaña, Norte de Santander?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'En FORMA Estudio & Cosmética por Eslen en Ocaña puedes agendar tu cita de diseño de cejas con visagismo áureo, sombreado semipermanente y laminado de cejas (Brow Lamination) directamente desde nuestra página web.',
+                text: 'En FORMA Estudio & Cosmética por Eslen en Ocaña ofrecemos Diseño de Cejas con depilación en cera o con Gillette y pigmentación semipermanente desde $8.000 hasta $20.000 COP, con garantía de 4 días.',
               },
             },
             {

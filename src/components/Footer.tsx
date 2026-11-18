@@ -25,8 +25,8 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-5 space-y-3.5">
             <FormaLogo size="md" variant="light" showWordmark={true} showSubtitle={true} />
             <p className="text-xs sm:text-sm text-[#FAF7F5]/75 leading-relaxed max-w-md pt-1">
-              Estudio especializado en diseño arquitectónico de cejas, visagismo áureo, laminado
-              profesional (Brow Lamination) y productos de cuidado para cejas, pestañas y rostro seleccionados por{' '}
+              Estudio especializado en diseño de cejas, depilación en cera o con Gillette,
+              pigmentación semipermanente y productos de cuidado para cejas, pestañas y rostro seleccionados por{' '}
               <strong>{settings.ownerName}</strong> con entregas rápidas en Ocaña, Norte de Santander.
             </p>
             <address className="not-italic pt-1 flex items-center gap-2 text-xs text-[#F4C2C2]">
