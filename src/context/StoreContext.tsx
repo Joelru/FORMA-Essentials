@@ -25,6 +25,7 @@ import { playNotificationChime } from '../utils/format';
 import { compressBase64DataUrl } from '../utils/image';
 import {
   notifyOwnerBookingRedirect,
+  notifyOwnerNewAppointment,
   notifyOwnerNewOrder,
   showBrowserSystemNotification
 } from '../utils/notifications';
@@ -33,6 +34,7 @@ const STORAGE_KEYS = {
   PRODUCTS: 'forma_store_products_v3',
   ORDERS: 'forma_store_orders_v3',
   APPOINTMENTS: 'forma_store_appointments_v3',
+  BLOCKED_SLOTS: 'forma_store_blocked_slots_v1',
   BOOKING_REDIRECTS: 'forma_store_booking_redirects_v1',
   SETTINGS: 'forma_store_settings_v3',
   VISITS: 'forma_store_visits_v3',
@@ -66,6 +68,7 @@ interface StoreContextType {
   products: Product[];
   orders: Order[];
   appointments: Appointment[];
+  blockedSlots: string[];
   bookingRedirects: BookingRedirectItem[];
   settings: StoreSettings;
   visitsCount: number;
@@ -116,8 +119,9 @@ interface StoreContextType {
   markAllOrdersReviewed: () => void;
 
   // Appointments
-  createAppointment: (input: CreateAppointmentInput) => Appointment;
+  createAppointment: (input: CreateAppointmentInput) => Promise<Appointment>;
   updateAppointmentStatus: (appointmentId: string, status: AppointmentStatus) => void;
+  toggleBlockedSlot: (date: string, timeSlot: string) => Promise<void>;
 
   // Admin Product CRUD
   addProduct: (product: Omit<Product, 'id' | 'clicks_count' | 'createdAt'>) => void;
@@ -184,6 +188,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [appointments, setAppointments] = useState<Appointment[]>(() =>
     loadFromStorage<Appointment[]>(STORAGE_KEYS.APPOINTMENTS, INITIAL_APPOINTMENTS)
   );
+  const [blockedSlots, setBlockedSlots] = useState<string[]>(() =>
+    loadFromStorage<string[]>(STORAGE_KEYS.BLOCKED_SLOTS, [])
+  );
   const [bookingRedirects, setBookingRedirects] = useState<BookingRedirectItem[]>(() =>
     loadFromStorage<BookingRedirectItem[]>(STORAGE_KEYS.BOOKING_REDIRECTS, [])
   );
@@ -228,6 +235,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const isRemoteUpdate = useRef(false);
   const prevOrdersCount = useRef(orders.length);
+  const prevAppointmentsCount = useRef(appointments.length);
   const prevRedirectsCount = useRef(bookingRedirects.length);
 
   // Push state helper to Firestore
@@ -236,6 +244,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       products?: Product[];
       orders?: Order[];
       appointments?: Appointment[];
+      blockedSlots?: string[];
       bookingRedirects?: BookingRedirectItem[];
       settings?: StoreSettings;
       visitsCount?: number;
@@ -372,7 +381,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setBookingRedirects(newRedirects);
         } else if (e.key === STORAGE_KEYS.APPOINTMENTS) {
           const newApps = JSON.parse(e.newValue) as Appointment[];
+          prevAppointmentsCount.current = newApps.length;
           setAppointments(newApps);
+        } else if (e.key === STORAGE_KEYS.BLOCKED_SLOTS) {
+          setBlockedSlots(JSON.parse(e.newValue));
         } else if (e.key === STORAGE_KEYS.SETTINGS) {
           setSettings(JSON.parse(e.newValue));
         } else if (e.key === STORAGE_KEYS.VISITS) {
@@ -407,6 +419,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             products,
             orders,
             appointments,
+            blockedSlots,
             settings,
             visitsCount: initialVisits,
             updatedAt: new Date().toISOString(),
@@ -478,8 +491,27 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           );
         }
         if (Array.isArray(data.appointments)) {
+          if (data.appointments.length > prevAppointmentsCount.current) {
+            const newest = data.appointments[0] as Appointment;
+            playNotificationChime();
+            showBrowserSystemNotification(
+              `📅 ¡Nueva Cita #${newest.id}!`,
+              `${newest.customerName} • ${newest.preferredDate} (${newest.preferredTimeSlot})`,
+              `${window.location.origin}/admin`
+            );
+            setLatestAlert({
+              type: 'appointment',
+              title: `¡Nueva Cita #${newest.id}!`,
+              subtitle: `${newest.customerName} • ${newest.preferredDate} (${newest.preferredTimeSlot})`,
+            });
+          }
+          prevAppointmentsCount.current = data.appointments.length;
           setAppointments(data.appointments);
           localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(data.appointments));
+        }
+        if (Array.isArray(data.blockedSlots)) {
+          setBlockedSlots(data.blockedSlots);
+          localStorage.setItem(STORAGE_KEYS.BLOCKED_SLOTS, JSON.stringify(data.blockedSlots));
         }
         if (data.settings) {
           setSettings(data.settings);
@@ -530,6 +562,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           products: compressedProducts,
           orders: cleanOrders,
           appointments,
+          blockedSlots,
           bookingRedirects,
           settings,
           visitsCount,
@@ -544,7 +577,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setFirebaseStatus({ isConnected: true, projectId, syncing: false, error: msg });
       return false;
     }
-  }, [products, orders, appointments, bookingRedirects, settings, visitsCount]);
+  }, [products, orders, appointments, blockedSlots, bookingRedirects, settings, visitsCount]);
 
   // 1. Silent Click Tracking on Product ("Ver Detalles" or "Agregar al Carrito") & Booking Redirect Tracking
   const trackProductClick = useCallback(
@@ -920,9 +953,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, [pushToFirestore]);
 
-  // 4. Appointments Management
+  // 4. Appointments Management (with atomic slot protection in Firestore)
   const createAppointment = useCallback(
-    (input: CreateAppointmentInput): Appointment => {
+    async (input: CreateAppointmentInput): Promise<Appointment> => {
       const randomNum = Math.floor(205 + Math.random() * 790);
       const newAppointment: Appointment = {
         id: `CITA-${randomNum}`,
@@ -940,21 +973,109 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isNew: true,
       };
 
-      const updated = [newAppointment, ...appointments];
-      setAppointments(updated);
-      localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(updated));
-      pushToFirestore({ appointments: updated });
+      const slotKey = `${newAppointment.preferredDate}|${newAppointment.preferredTimeSlot}`;
+      const dayKey = `${newAppointment.preferredDate}|ALL_DAY`;
 
+      const isConflict = (apps: Appointment[], blocked: string[]) => {
+        if (blocked.includes(dayKey) || blocked.includes(slotKey)) {
+          return true;
+        }
+        return apps.some(
+          (a) =>
+            a.status !== 'Cancelada' &&
+            a.preferredDate === newAppointment.preferredDate &&
+            a.preferredTimeSlot === newAppointment.preferredTimeSlot
+        );
+      };
+
+      let finalAppointments = [newAppointment, ...appointments];
+      const { db, isConnected } = getFirebaseDb();
+
+      if (isConnected && db) {
+        const storeDocRef = doc(db, 'forma_essentials', 'live_store_data');
+        try {
+          finalAppointments = await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(storeDocRef);
+            const cloudData = snap.exists() ? snap.data() : {};
+            const cloudApps: Appointment[] = Array.isArray(cloudData.appointments)
+              ? (cloudData.appointments as Appointment[])
+              : [];
+            const cloudBlocked: string[] = Array.isArray(cloudData.blockedSlots)
+              ? (cloudData.blockedSlots as string[])
+              : [];
+
+            if (isConflict(cloudApps, cloudBlocked)) {
+              throw new Error(
+                'Ese horario acaba de ser ocupado o bloqueado. Por favor elige otro turno disponible.'
+              );
+            }
+
+            const nextApps = [
+              newAppointment,
+              ...cloudApps.filter((a) => a.id !== newAppointment.id),
+            ];
+            transaction.set(
+              storeDocRef,
+              {
+                appointments: nextApps,
+                updatedAt: new Date().toISOString(),
+              },
+              { merge: true }
+            );
+            return nextApps;
+          });
+          setFirebaseStatus((prev) => (prev.error ? { ...prev, error: null } : prev));
+        } catch (err) {
+          if (err instanceof Error && err.message.includes('acaba de ser ocupado')) {
+            throw err;
+          }
+          const msg = err instanceof Error ? err.message : 'Error guardando la cita en Firebase';
+          console.error('Error guardando cita en Firestore:', err);
+          setFirebaseStatus((prev) => ({ ...prev, error: msg }));
+          throw new Error(
+            'No pudimos registrar tu cita en el servidor. Verifica tu conexión e inténtalo de nuevo.'
+          );
+        }
+      } else if (isConflict(appointments, blockedSlots)) {
+        throw new Error(
+          'Ese horario ya está ocupado o bloqueado. Por favor elige otro turno disponible.'
+        );
+      }
+
+      prevAppointmentsCount.current = finalAppointments.length;
+      setAppointments(finalAppointments);
+      localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(finalAppointments));
+
+      notifyOwnerNewAppointment(newAppointment, settings);
+      showBrowserSystemNotification(
+        `📅 ¡Nueva Cita #${newAppointment.id}!`,
+        `${newAppointment.customerName} • ${newAppointment.preferredDate} (${newAppointment.preferredTimeSlot})`,
+        `${window.location.origin}/admin`
+      );
       playNotificationChime();
       setLatestAlert({
         type: 'appointment',
         title: `¡Nueva Cita Solicitada #${newAppointment.id}!`,
-        subtitle: `${newAppointment.customerName} • ${newAppointment.serviceName}`,
+        subtitle: `${newAppointment.customerName} • ${newAppointment.preferredDate} (${newAppointment.preferredTimeSlot})`,
       });
 
       return newAppointment;
     },
-    [appointments, pushToFirestore]
+    [appointments, blockedSlots, settings]
+  );
+
+  const toggleBlockedSlot = useCallback(
+    async (date: string, timeSlot: string) => {
+      const key = `${date}|${timeSlot}`;
+      const nextBlocked = blockedSlots.includes(key)
+        ? blockedSlots.filter((item) => item !== key)
+        : [...blockedSlots, key];
+
+      setBlockedSlots(nextBlocked);
+      localStorage.setItem(STORAGE_KEYS.BLOCKED_SLOTS, JSON.stringify(nextBlocked));
+      await pushToFirestore({ blockedSlots: nextBlocked });
+    },
+    [blockedSlots, pushToFirestore]
   );
 
   const updateAppointmentStatus = useCallback(
@@ -1043,14 +1164,17 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setProducts(zeroedProducts);
     setOrders([]);
     setAppointments([]);
+    setBlockedSlots([]);
     setBookingRedirects([]);
     setVisitsCount(0);
     prevOrdersCount.current = 0;
+    prevAppointmentsCount.current = 0;
     prevRedirectsCount.current = 0;
 
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(zeroedProducts));
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify([]));
+    localStorage.setItem(STORAGE_KEYS.BLOCKED_SLOTS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.BOOKING_REDIRECTS, JSON.stringify([]));
     localStorage.setItem(STORAGE_KEYS.VISITS, JSON.stringify(0));
 
@@ -1058,6 +1182,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       products: zeroedProducts,
       orders: [],
       appointments: [],
+      blockedSlots: [],
       bookingRedirects: [],
       visitsCount: 0,
     });
@@ -1073,6 +1198,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         products,
         orders,
         appointments,
+        blockedSlots,
         bookingRedirects,
         settings,
         visitsCount,
@@ -1106,6 +1232,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         markAllOrdersReviewed,
         createAppointment,
         updateAppointmentStatus,
+        toggleBlockedSlot,
         addProduct,
         updateProduct,
         toggleProductPaused,

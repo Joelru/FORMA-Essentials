@@ -33,16 +33,17 @@ import {
   ProductCategory,
   ProductBadge,
   OrderStatus,
+  AppointmentStatus,
   FirebaseCustomConfig
 } from '../types';
-import { PRODUCT_CATEGORIES } from '../data/seedData';
+import { PRODUCT_CATEGORIES, STUDIO_TIME_SLOTS } from '../data/seedData';
 import {
   formatCOP,
-  buildOrderWhatsAppUrl
+  buildOrderWhatsAppUrl,
+  buildAppointmentWhatsAppUrl
 } from '../utils/format';
 import { getSavedFirebaseConfig, saveFirebaseCustomConfig } from '../lib/firebase';
 import { FormaLogo } from './FormaLogo';
-import { EXTERNAL_BOOKING_URL } from './BookingSection';
 import {
   DEFAULT_NTFY_TOPIC,
   sendNtfyPush,
@@ -60,11 +61,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   const {
     products,
     orders,
-    bookingRedirects,
+    appointments,
+    blockedSlots,
     settings,
     visitsCount,
     firebaseStatus,
     updateOrderStatus,
+    updateAppointmentStatus,
+    toggleBlockedSlot,
     addProduct,
     updateProduct,
     toggleProductPaused,
@@ -86,11 +90,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
 
   // Active Tab
   const [activeTab, setActiveTab] = useState<
-    'analytics' | 'orders' | 'products' | 'settings'
+    'analytics' | 'orders' | 'appointments' | 'products' | 'settings'
   >('analytics');
 
-  // Orders Filter
+  // Orders & Appointments Filter
   const [orderFilter, setOrderFilter] = useState<string>('Todos');
+  const [appointmentFilter, setAppointmentFilter] = useState<string>('Todas');
+  const [blockDate, setBlockDate] = useState<string>(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  });
 
   // Product CRUD Form State
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
@@ -135,6 +147,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
   const pendingOrders = useMemo(
     () => orders.filter((o) => o.status === 'Pendiente por Despachar'),
     [orders]
+  );
+
+  const pendingAppointments = useMemo(
+    () => appointments.filter((a) => a.status === 'Pendiente'),
+    [appointments]
   );
 
   const deliveredRevenue = useMemo(
@@ -466,6 +483,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
           </div>
         )}
 
+        {/* Prominent Alert Banner for Pending Appointments */}
+        {pendingAppointments.length > 0 && (
+          <div className="bg-gradient-to-r from-[#6B9080] to-[#4f6d60] text-white rounded-2xl p-4 sm:p-5 shadow-luxury flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-white/80 font-bold">
+                  Agenda Cabina FORMA • Eslen
+                </span>
+                <h2 className="font-serif text-xl sm:text-2xl font-bold">
+                  Tienes {pendingAppointments.length}{' '}
+                  {pendingAppointments.length === 1
+                    ? 'cita nueva por confirmar'
+                    : 'citas nuevas por confirmar'}
+                </h2>
+              </div>
+            </div>
+            <button
+              onClick={() => setActiveTab('appointments')}
+              className="shrink-0 px-5 py-2.5 rounded-xl bg-white text-[#2D2926] hover:bg-[#FDF2F4] text-xs font-bold shadow-sm transition-colors"
+            >
+              Ver y Confirmar Citas →
+            </button>
+          </div>
+        )}
+
         {/* Navigation Tabs */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           <button
@@ -498,6 +543,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
           </button>
 
           <button
+            onClick={() => setActiveTab('appointments')}
+            className={`shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
+              activeTab === 'appointments'
+                ? 'bg-[#B76E79] text-white shadow-sm'
+                : 'bg-white text-[#2D2926] border border-[#F4C2C2]/70 hover:bg-[#FDF2F4]'
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Citas ({appointments.length})</span>
+            {pendingAppointments.length > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-[#6B9080] text-white text-[10px] font-bold">
+                {pendingAppointments.length} nuevas
+              </span>
+            )}
+          </button>
+
+          <button
             onClick={() => setActiveTab('products')}
             className={`shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all ${
               activeTab === 'products'
@@ -520,16 +582,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
             <Settings className="w-4 h-4" />
             <span>Redes & Firebase</span>
           </button>
-
-          <a
-            href={settings.bookingUrl || EXTERNAL_BOOKING_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 px-4 py-3 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 bg-white text-[#6B9080] border border-[#6B9080]/40 hover:bg-[#6B9080] hover:text-white transition-all"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Plataforma Externa de Citas ↗</span>
-          </a>
         </div>
 
         {/* =========================================================
@@ -612,63 +664,57 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
               </div>
             </div>
 
-            {/* Live Booking Redirects Tracker + Mobile Notification Quick Banner */}
+            {/* Live Appointments Overview + Mobile Notification Quick Banner */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-              {/* Left: Real-time log of people clicking "Agendar Cita" */}
+              {/* Left: Real-time log of appointments booked in FORMA */}
               <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2] shadow-soft space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#FDF2F4] pb-3.5">
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B9080]">
-                      Monitoreo de Citas en Tiempo Real
+                      Agenda Directa en FORMA
                     </span>
                     <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926]">
-                      Redirecciones a Plataforma de Citas ({bookingRedirects.length})
+                      Últimas Citas Solicitadas ({appointments.length})
                     </h3>
                     <p className="text-xs text-[#2D2926]/65">
-                      Cada vez que una clienta pulsa "Agendar Cita", queda registrado aquí y te llega una alerta al celular.
+                      Cada cita agendada en la página aparece aquí al instante y te envía alerta al celular.
                     </p>
                   </div>
-                  <a
-                    href={settings.bookingUrl || EXTERNAL_BOOKING_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('appointments')}
                     className="px-3.5 py-2 rounded-xl bg-[#6B9080] hover:bg-[#57786a] text-white text-xs font-semibold transition-colors"
                   >
-                    Abrir Agenda Externa ↗
-                  </a>
+                    Gestionar Citas y Horarios →
+                  </button>
                 </div>
 
-                {bookingRedirects.length === 0 ? (
+                {appointments.length === 0 ? (
                   <div className="py-6 text-center text-xs text-[#2D2926]/60 bg-[#FAF7F5] rounded-2xl border border-[#F4C2C2]/40">
-                    Aún no se han registrado clics hacia la plataforma de citas desde el último reinicio.
+                    Aún no hay citas registradas desde el último reinicio.
                   </div>
                 ) : (
                   <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
-                    {bookingRedirects.slice(0, 15).map((item, index) => (
+                    {appointments.slice(0, 12).map((app) => (
                       <div
-                        key={item.id}
+                        key={app.id}
                         className="flex items-center justify-between gap-3 p-3 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2]/50 text-xs"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="w-6 h-6 rounded-full bg-[#B76E79]/15 text-[#B76E79] font-bold text-[10px] flex items-center justify-center shrink-0">
-                            {index === 0 ? '★' : index + 1}
+                          <span className="px-2 py-0.5 rounded-full bg-[#B76E79]/15 text-[#B76E79] font-mono font-bold text-[10px] shrink-0">
+                            #{app.id}
                           </span>
                           <div className="min-w-0">
                             <p className="font-semibold text-[#2D2926] truncate">
-                              {item.source}
+                              {app.customerName} • {app.serviceName}
                             </p>
                             <p className="text-[10px] text-[#6B9080] font-medium">
-                              Redirigida a BeautySites (framestudio)
+                              {app.preferredDate} • {app.preferredTimeSlot} ({app.status})
                             </p>
                           </div>
                         </div>
-                        <span className="text-[11px] font-mono text-[#2D2926]/65 shrink-0">
-                          {new Date(item.createdAt).toLocaleString('es-CO', {
-                            day: '2-digit',
-                            month: 'short',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
+                        <span className="font-bold text-[#B76E79] shrink-0">
+                          {formatCOP(app.servicePrice, false)}
                         </span>
                       </div>
                     ))}
@@ -687,7 +733,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                     Recibe avisos en tu celular al instante
                   </h3>
                   <p className="text-xs text-[#FAF7F5]/80 leading-relaxed">
-                    Entérate en el acto cuando alguien haga un <strong>pedido de productos</strong> o cuando alguien <strong>vaya a agendar cita</strong>:
+                    Entérate en el acto cuando alguien haga un <strong>pedido de productos</strong> o cuando alguien <strong>agende una cita</strong>:
                   </p>
                   <ol className="text-xs text-[#FAF7F5]/90 space-y-1.5 list-decimal pl-4 pt-1">
                     <li>
@@ -700,7 +746,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                       </code>
                     </li>
                     <li>
-                      ¡Listo! Tu celular sonará automáticamente con cada pedido o clic a citas.
+                      ¡Listo! Tu celular sonará automáticamente con cada pedido o nueva cita.
                     </li>
                   </ol>
                 </div>
@@ -720,7 +766,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                         topic: settings.ntfyTopic || DEFAULT_NTFY_TOPIC,
                         title: '✨ ¡Prueba Exitosa de FORMA!',
                         message:
-                          'Las alertas de nuevos pedidos y redirecciones a citas están conectadas a tu celular.',
+                          'Las alertas de nuevos pedidos y nuevas citas agendadas están conectadas a tu celular.',
                         priority: 5,
                         tags: ['sparkles', 'white_check_mark'],
                         clickUrl: `${window.location.origin}/admin`,
@@ -1042,6 +1088,244 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                     </div>
                   );
                 })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* =========================================================
+            TAB 2.5: APPOINTMENTS MANAGEMENT & AVAILABILITY BLOCKER
+           ========================================================= */}
+        {activeTab === 'appointments' && (
+          <div className="space-y-6">
+            {/* Quick Availability Blocker */}
+            <div className="bg-white rounded-3xl p-5 sm:p-6 border border-[#F4C2C2] shadow-soft space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#FDF2F4] pb-3.5">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#B76E79]">
+                    Control de Agenda en Tiempo Real
+                  </span>
+                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926]">
+                    Bloquear Días u Horarios de Cabina
+                  </h3>
+                  <p className="text-xs text-[#2D2926]/65">
+                    Si ya agendaste una clienta por WhatsApp/Instagram o no vas a atender un horario, bloquéalo aquí para que no aparezca disponible en la web.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <input
+                    type="date"
+                    value={blockDate}
+                    onChange={(e) => setBlockDate(e.target.value)}
+                    className="px-3 py-2 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs font-bold text-[#2D2926]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleBlockedSlot(blockDate, 'ALL_DAY')}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors ${
+                      blockedSlots.includes(`${blockDate}|ALL_DAY`)
+                        ? 'bg-[#2D2926] text-white'
+                        : 'bg-[#FDF2F4] text-[#B76E79] border border-[#F4C2C2] hover:bg-[#F4C2C2]/40'
+                    }`}
+                  >
+                    {blockedSlots.includes(`${blockDate}|ALL_DAY`)
+                      ? '✓ Día Bloqueado (Clic para abrir)'
+                      : 'Bloquear Todo el Día'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2">
+                {STUDIO_TIME_SLOTS.map((slot) => {
+                  const isBlocked = blockedSlots.includes(`${blockDate}|${slot}`);
+                  const isBooked = appointments.some(
+                    (a) =>
+                      a.status !== 'Cancelada' &&
+                      a.preferredDate === blockDate &&
+                      a.preferredTimeSlot === slot
+                  );
+                  return (
+                    <button
+                      type="button"
+                      key={slot}
+                      disabled={isBooked}
+                      onClick={() => toggleBlockedSlot(blockDate, slot)}
+                      className={`py-2 px-2 rounded-xl border text-xs font-bold text-center transition-all ${
+                        isBooked
+                          ? 'bg-[#6B9080]/15 text-[#6B9080] border-[#6B9080]/40 cursor-not-allowed'
+                          : isBlocked
+                          ? 'bg-[#2D2926] text-white border-[#2D2926]'
+                          : 'bg-[#FAF7F5] text-[#2D2926] border-[#F4C2C2] hover:bg-[#FDF2F4]'
+                      }`}
+                    >
+                      <span className="block">{slot}</span>
+                      <span className="block text-[9px] font-medium mt-0.5">
+                        {isBooked ? 'Reservado' : isBlocked ? 'Bloqueado' : 'Libre'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Appointments List */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h3 className="font-serif text-2xl font-bold text-[#2D2926]">
+                Citas Agendadas en FORMA ({appointments.length})
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    'Todas',
+                    'Pendiente',
+                    'Confirmada',
+                    'Completada',
+                    'Cancelada',
+                  ] as const
+                ).map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setAppointmentFilter(st)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                      appointmentFilter === st
+                        ? 'bg-[#2D2926] text-white'
+                        : 'bg-white text-[#2D2926] border border-[#F4C2C2]'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {appointments.filter(
+              (a) => appointmentFilter === 'Todas' || a.status === appointmentFilter
+            ).length === 0 ? (
+              <div className="bg-white rounded-3xl p-10 text-center border border-[#F4C2C2]">
+                <Calendar className="w-10 h-10 text-[#B76E79] mx-auto mb-2" />
+                <p className="font-serif text-xl font-bold text-[#2D2926]">
+                  No hay citas en este estado
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {appointments
+                  .filter(
+                    (a) =>
+                      appointmentFilter === 'Todas' || a.status === appointmentFilter
+                  )
+                  .map((app) => {
+                    const whatsappUrl = buildAppointmentWhatsAppUrl(app);
+                    const isPending = app.status === 'Pendiente';
+                    const isConfirmed = app.status === 'Confirmada';
+                    const isCompleted = app.status === 'Completada';
+
+                    return (
+                      <div
+                        key={app.id}
+                        className={`bg-white rounded-3xl p-5 sm:p-6 border transition-all shadow-soft ${
+                          isPending
+                            ? 'border-2 border-[#6B9080]'
+                            : 'border-[#F4C2C2]/70'
+                        }`}
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-[#FDF2F4]">
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-mono text-sm font-bold px-3 py-1 rounded-full bg-[#2D2926] text-white">
+                                #{app.id}
+                              </span>
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                  isPending
+                                    ? 'bg-amber-50 text-amber-700 border border-amber-300'
+                                    : isConfirmed
+                                    ? 'bg-[#6B9080]/15 text-[#6B9080]'
+                                    : isCompleted
+                                    ? 'bg-[#FDF2F4] text-[#B76E79]'
+                                    : 'bg-red-50 text-red-600'
+                                }`}
+                              >
+                                {app.status}
+                              </span>
+                              <span className="text-xs font-bold text-[#B76E79] flex items-center gap-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {app.preferredDate} • {app.preferredTimeSlot}
+                              </span>
+                            </div>
+                            <h4 className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926] pt-1">
+                              {app.customerName}
+                            </h4>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-3">
+                            <a
+                              href={whatsappUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bg-[#6B9080] hover:bg-[#567668] text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-2 transition-all"
+                            >
+                              <Phone className="w-4 h-4" />
+                              <span>Confirmar por WhatsApp</span>
+                            </a>
+
+                            <select
+                              value={app.status}
+                              onChange={(e) =>
+                                updateAppointmentStatus(
+                                  app.id,
+                                  e.target.value as AppointmentStatus
+                                )
+                              }
+                              className="px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs font-bold text-[#2D2926] focus:outline-none focus:border-[#B76E79]"
+                            >
+                              <option value="Pendiente">Pendiente</option>
+                              <option value="Confirmada">Confirmada</option>
+                              <option value="Completada">Completada</option>
+                              <option value="Cancelada">Cancelada</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 pt-4 text-xs">
+                          <div className="md:col-span-6 space-y-1.5">
+                            <p className="flex items-center gap-2 text-[#2D2926]">
+                              <Phone className="w-3.5 h-3.5 text-[#B76E79]" />
+                              <span>WhatsApp: </span>
+                              <a
+                                href={whatsappUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-bold underline text-[#B76E79]"
+                              >
+                                {app.customerPhone}
+                              </a>
+                            </p>
+                            {app.notes && (
+                              <p className="p-2.5 rounded-xl bg-[#FDF2F4] text-[#2D2926]/85 italic">
+                                Nota: "{app.notes}"
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="md:col-span-6 bg-[#FAF7F5] rounded-2xl p-3.5 border border-[#F4C2C2]/60 flex items-center justify-between gap-3">
+                            <div>
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-[#B76E79]">
+                                Servicio Solicitado
+                              </span>
+                              <p className="font-serif text-base font-bold text-[#2D2926]">
+                                {app.serviceName}
+                              </p>
+                            </div>
+                            <span className="font-serif text-xl font-bold text-[#B76E79] shrink-0">
+                              {formatCOP(app.servicePrice)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>

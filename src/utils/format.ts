@@ -38,7 +38,7 @@ export function buildAppointmentWhatsAppUrl(appointment: Appointment): string {
   const phoneWithCountry = digits.startsWith('57') ? digits : `57${digits}`;
   const priceFormatted = new Intl.NumberFormat('es-CO').format(appointment.servicePrice);
 
-  const message = `¡Hola ${appointment.customerName}! ✨ Soy Eslen de FORMA en Ocaña. Recibí tu solicitud de cita (#${appointment.id}) para el servicio de *${appointment.serviceName}* ($${priceFormatted} COP) el día *${appointment.preferredDate}* en la jornada de la *${appointment.preferredTimeSlot}*. Te escribo para confirmar tu hora exacta en agenda.`;
+  const message = `¡Hola ${appointment.customerName}! ✨ Soy Eslen de FORMA en Ocaña. Recibí tu solicitud de cita (#${appointment.id}) para el servicio de *${appointment.serviceName}* ($${priceFormatted} COP) el día *${appointment.preferredDate}* a las *${appointment.preferredTimeSlot}*. Te escribo para confirmar tu cita en cabina.`;
 
   return `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`;
 }

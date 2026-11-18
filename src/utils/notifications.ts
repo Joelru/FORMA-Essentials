@@ -1,4 +1,4 @@
-import { Order, StoreSettings } from '../types';
+import { Appointment, Order, StoreSettings } from '../types';
 import { formatCOP } from './format';
 
 export const DEFAULT_NTFY_TOPIC = 'forma-eslen-ocana-alertas';
@@ -133,6 +133,30 @@ export function notifyOwnerNewOrder(
       message,
       priority: 5,
       tags: ['shopping_cart', 'tada'],
+      clickUrl: `${window.location.origin}/admin`,
+    });
+  }
+}
+
+/**
+ * Dispara alerta inmediata cuando una clienta reserva una cita directamente en FORMA
+ */
+export function notifyOwnerNewAppointment(
+  appointment: Appointment,
+  settings: StoreSettings
+): void {
+  const topic = settings.ntfyTopic || DEFAULT_NTFY_TOPIC;
+  const title = `📅 ¡Nueva Cita ${appointment.id} (${formatCOP(appointment.servicePrice)})!`;
+  const notesLine = appointment.notes ? `\nNotas: ${appointment.notes}` : '';
+  const message = `Clienta: ${appointment.customerName}\nWhatsApp: ${appointment.customerPhone}\nServicio: ${appointment.serviceName}\nFecha: ${appointment.preferredDate}\nHora: ${appointment.preferredTimeSlot}${notesLine}`;
+
+  if (settings.notificationsEnabled !== false) {
+    sendNtfyPush({
+      topic,
+      title,
+      message,
+      priority: 5,
+      tags: ['calendar', 'sparkles'],
       clickUrl: `${window.location.origin}/admin`,
     });
   }

@@ -73,7 +73,7 @@ export interface BrowService {
   tag?: string;
 }
 
-export type AppointmentTimeSlot = 'Mañana (8:30 AM - 12:00 PM)' | 'Tarde (2:00 PM - 6:30 PM)';
+export type AppointmentTimeSlot = string;
 
 export type AppointmentStatus = 'Pendiente' | 'Confirmada' | 'Completada' | 'Cancelada';
 

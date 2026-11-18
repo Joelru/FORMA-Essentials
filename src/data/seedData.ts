@@ -208,6 +208,18 @@ export const BROW_SERVICES: BrowService[] = [
   }
 ];
 
+export const STUDIO_TIME_SLOTS: string[] = [
+  '8:30 AM',
+  '9:30 AM',
+  '10:30 AM',
+  '11:30 AM',
+  '2:00 PM',
+  '3:00 PM',
+  '4:00 PM',
+  '5:00 PM',
+  '6:00 PM',
+];
+
 export const INITIAL_SETTINGS: StoreSettings = {
   brandName: 'FORMA',
   brandSubtitle: 'ESTUDIO & COSMÉTICA • POR ESLEN',
@@ -222,7 +234,6 @@ export const INITIAL_SETTINGS: StoreSettings = {
   nequiNumber: '3154829104',
   daviplataNumber: '3154829104',
   announcementText: '🛵 Domicilio GRATIS en Ocaña a partir de las 5:00 PM • Pagos Contra Entrega, Nequi o Daviplata',
-  bookingUrl: 'https://beautysitesbd.web.app/booking/framestudio',
   ntfyTopic: 'forma-eslen-ocana-alertas',
   notificationsEnabled: true
 };

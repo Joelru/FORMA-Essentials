@@ -5,12 +5,10 @@ import {
   Calendar,
   Instagram,
   MapPin,
-  Bell,
-  ExternalLink
+  Bell
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 import { FormaLogo } from './FormaLogo';
-import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 interface NavbarProps {
   activeView: 'store' | 'admin';
@@ -25,10 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
     settings,
     latestAlert,
     dismissAlert,
-    trackBookingRedirect,
   } = useStore();
-
-  const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
 
   const scrollToSection = (id: string) => {
     if (activeView !== 'store') {
@@ -116,17 +111,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
             className="hidden md:flex items-center gap-4 text-sm font-medium text-[#2D2926]/80"
           >
             {/* Highlighted Animated Booking CTA in Header */}
-            <a
-              href={bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackBookingRedirect('Barra Superior (Agendar Cita)')}
+            <button
+              type="button"
+              onClick={() => scrollToSection('citas-eslen')}
               className="animate-nav-cta bg-[#FDF2F4] hover:bg-[#B76E79] text-[#9A5660] hover:text-white border border-[#B76E79]/60 px-4 py-2 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>Agendar Cita con Eslen</span>
-              <ExternalLink className="w-3 h-3 opacity-80" />
-            </a>
+            </button>
 
             <button
               onClick={() => scrollToSection('catalogo')}
@@ -200,18 +192,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
             </button>
 
             {/* Center Prominent Animated Booking Button on Mobile */}
-            <a
-              href={bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackBookingRedirect('Barra Móvil Inferior (Agendar Cita)')}
+            <button
+              type="button"
+              onClick={() => scrollToSection('citas-eslen')}
               className="animate-cta-loop flex flex-col items-center justify-center py-2 px-2 rounded-2xl bg-gradient-to-r from-[#B76E79] to-[#9A5660] text-white shadow-luxury"
             >
               <div className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
                 <span className="text-[11px] font-bold tracking-wide">Agendar Cita</span>
               </div>
-            </a>
+            </button>
 
             <button
               data-cart-target="true"

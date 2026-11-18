@@ -17,11 +17,9 @@ import {
   Instagram
 } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
-import { EXTERNAL_BOOKING_URL } from './BookingSection';
 
 export const HeroSection: React.FC = () => {
-  const { settings, trackBookingRedirect } = useStore();
-  const bookingUrl = settings.bookingUrl || EXTERNAL_BOOKING_URL;
+  const { settings } = useStore();
 
   const [activeSlide, setActiveSlide] = useState<0 | 1>(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -198,17 +196,15 @@ export const HeroSection: React.FC = () => {
                       {settings.city}
                     </span>
 
-                    <a
-                      href={bookingUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackBookingRedirect('Portada (Insignia Agenda Abierta)')}
+                    <button
+                      type="button"
+                      onClick={() => scrollTo('citas-eslen')}
                       className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2D2926]/90 backdrop-blur-md text-white border border-[#F4C2C2]/40 text-[11px] font-semibold shadow-sm hover:bg-[#B76E79] transition-colors"
                     >
                       <span className="w-2 h-2 rounded-full bg-[#6B9080] animate-ping" />
                       <span className="w-2 h-2 rounded-full bg-[#6B9080] -ml-3.5" />
                       <span>Agenda Abierta</span>
-                    </a>
+                    </button>
                   </div>
 
                   {/* Floating Product Mini-Card (Top-Right / Side Visual Accent on Tablet/Desktop) */}
@@ -522,17 +518,15 @@ export const HeroSection: React.FC = () => {
 
             {/* Primary CTAs — "Agendar Cita" is #1 with Continuous Subtle Loop Animation */}
             <div className="pt-1 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-stretch justify-center lg:justify-start gap-3">
-              <a
-                href={bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackBookingRedirect('Botón Principal Portada (Agendar Cita)')}
+              <button
+                type="button"
+                onClick={() => scrollTo('citas-eslen')}
                 className="animate-cta-loop inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#B76E79] via-[#9A5660] to-[#B76E79] text-white font-bold px-6 py-4 rounded-2xl text-sm sm:text-base border border-white/25"
               >
                 <Calendar className="w-5 h-5 shrink-0" />
                 <span>Agendar Cita con Eslen</span>
-                <ExternalLink className="w-4 h-4 shrink-0 opacity-90" />
-              </a>
+                <ArrowRight className="w-4 h-4 shrink-0 opacity-90" />
+              </button>
 
               <button
                 type="button"
