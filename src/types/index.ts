@@ -33,7 +33,7 @@ export interface CartItem {
   quantity: number;
 }
 
-export type PaymentMethod = 'Efectivo Contra Entrega' | 'Nequi' | 'Daviplata';
+export type PaymentMethod = 'Efectivo Contra Entrega' | 'Nequi';
 
 export type OrderStatus =
   | 'Pendiente por Despachar'
@@ -101,11 +101,8 @@ export interface StoreSettings {
   studioAddress: string;
   instagramUrl: string;
   instagramHandle: string;
-  tiktokUrl: string;
-  tiktokHandle: string;
   whatsappNumber: string; // 10 dígitos sin +57, ej: 3150000000
   nequiNumber: string;
-  daviplataNumber: string;
   announcementText: string;
   bookingUrl?: string;
   ntfyTopic?: string;

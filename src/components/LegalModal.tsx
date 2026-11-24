@@ -152,7 +152,7 @@ export const LegalModal: React.FC = () => {
                   3. Despachos en Ocaña y Medios de Pago
                 </h3>
                 <p>
-                  Realizamos entregas rápidas a domicilio en el casco urbano de Ocaña, Norte de Santander. Al finalizar tu pedido, nuestro equipo se comunicará a tu número de WhatsApp registrado para coordinar la entrega y el valor del domicilio según tu barrio. Aceptamos <strong>Pago en Efectivo Contra Entrega, Nequi y Daviplata</strong>.
+                  Realizamos entregas rápidas a domicilio en el casco urbano de Ocaña, Norte de Santander. Al finalizar tu pedido, nuestro equipo se comunicará a tu número de WhatsApp registrado para coordinar la entrega y el valor del domicilio según tu barrio. Aceptamos <strong>Pago en Efectivo Contra Entrega y Nequi</strong>.
                 </p>
               </div>
 

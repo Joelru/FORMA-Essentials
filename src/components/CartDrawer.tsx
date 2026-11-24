@@ -461,12 +461,11 @@ export const CartDrawer: React.FC = () => {
                   <label className="block text-xs font-bold text-[#2D2926] mb-1.5">
                     Método de Pago Preferido *
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {(
                       [
                         'Efectivo Contra Entrega',
                         'Nequi',
-                        'Daviplata',
                       ] as PaymentMethod[]
                     ).map((method) => {
                       const active = paymentMethod === method;
@@ -488,15 +487,13 @@ export const CartDrawer: React.FC = () => {
                     })}
                   </div>
 
-                  {paymentMethod !== 'Efectivo Contra Entrega' && (
+                  {paymentMethod === 'Nequi' && (
                     <div className="mt-2 p-2.5 rounded-xl bg-[#FDF2F4] border border-[#F4C2C2] text-xs text-[#2D2926]">
                       <span className="font-bold text-[#B76E79]">
-                        Cuenta oficial {paymentMethod} FORMA:{' '}
+                        Cuenta oficial Nequi FORMA:{' '}
                       </span>
                       <span className="font-mono font-bold">
-                        {paymentMethod === 'Nequi'
-                          ? settings.nequiNumber
-                          : settings.daviplataNumber}
+                        {settings.nequiNumber}
                       </span>
                     </div>
                   )}

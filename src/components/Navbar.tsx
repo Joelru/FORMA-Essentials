@@ -62,15 +62,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeView, setActiveView }) => 
             >
               IG: {settings.instagramHandle}
             </a>
-            <span>•</span>
-            <a
-              href={settings.tiktokUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              TikTok: {settings.tiktokHandle}
-            </a>
           </div>
         </div>
       </div>

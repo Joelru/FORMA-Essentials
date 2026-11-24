@@ -84,7 +84,7 @@ export const HeroSection: React.FC = () => {
     {
       icon: Banknote,
       title: 'Contra Entrega',
-      desc: 'Efectivo, Nequi o Daviplata',
+      desc: 'Efectivo o Nequi',
     },
   ];
 

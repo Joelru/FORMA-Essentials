@@ -1710,42 +1710,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#2D2926] mb-1">
-                    Enlace de TikTok (`URL`)
-                  </label>
-                  <input
-                    type="url"
-                    required
-                    value={settingsForm.tiktokUrl}
-                    onChange={(e) =>
-                      setSettingsForm({ ...settingsForm, tiktokUrl: e.target.value })
-                    }
-                    placeholder="https://tiktok.com/@forma.essentials"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-[#2D2926] mb-1">
-                    Usuario de TikTok
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={settingsForm.tiktokHandle}
-                    onChange={(e) =>
-                      setSettingsForm({
-                        ...settingsForm,
-                        tiktokHandle: e.target.value,
-                      })
-                    }
-                    placeholder="@forma.essentials"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-[#2D2926] mb-1">
                     WhatsApp Principal (10 dígitos)
                   </label>
                   <input
@@ -1770,22 +1734,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToStore })
                     value={settingsForm.nequiNumber}
                     onChange={(e) =>
                       setSettingsForm({ ...settingsForm, nequiNumber: e.target.value })
-                    }
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-[#2D2926] mb-1">
-                    Número Daviplata
-                  </label>
-                  <input
-                    type="text"
-                    value={settingsForm.daviplataNumber}
-                    onChange={(e) =>
-                      setSettingsForm({
-                        ...settingsForm,
-                        daviplataNumber: e.target.value,
-                      })
                     }
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#F4C2C2] text-xs"
                   />

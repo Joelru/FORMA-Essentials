@@ -152,7 +152,7 @@ export const ProductDetailModal: React.FC = () => {
             <div className="flex items-center gap-2 text-[11px] text-[#2D2926]/65 pt-1">
               <HeartHandshake className="w-4 h-4 text-[#B76E79] shrink-0" />
               <span>
-                Entrega rápida en Ocaña • Pago Contra Entrega, Nequi o Daviplata.
+                Entrega rápida en Ocaña • Pago Contra Entrega o Nequi.
               </span>
             </div>
           </div>

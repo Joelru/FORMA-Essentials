@@ -228,12 +228,9 @@ export const INITIAL_SETTINGS: StoreSettings = {
   studioAddress: 'FORMA Estudio & Cosmética — Ocaña, Norte de Santander',
   instagramUrl: 'https://instagram.com/forma.estudio',
   instagramHandle: '@forma.estudio',
-  tiktokUrl: 'https://tiktok.com/@forma.estudio',
-  tiktokHandle: '@forma.estudio',
   whatsappNumber: '3154829104',
   nequiNumber: '3154829104',
-  daviplataNumber: '3154829104',
-  announcementText: '🛵 Domicilio GRATIS en Ocaña a partir de las 5:00 PM • Pagos Contra Entrega, Nequi o Daviplata',
+  announcementText: '🛵 Domicilio GRATIS en Ocaña a partir de las 5:00 PM • Pagos Contra Entrega o Nequi',
   ntfyTopic: 'forma-eslen-ocana-alertas',
   notificationsEnabled: true
 };

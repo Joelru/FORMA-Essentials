@@ -107,20 +107,6 @@ export const Footer: React.FC = () => {
                   <span>{settings.instagramHandle}</span>
                 </div>
               </a>
-
-              {/* Dynamic TikTok Button */}
-              <a
-                href={settings.tiktokUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-[#B76E79] text-white text-xs font-semibold transition-all border border-white/10"
-              >
-                <Sparkles className="w-4 h-4 text-[#F4C2C2]" />
-                <div>
-                  <span className="block text-[10px] text-white/60">TikTok Oficial</span>
-                  <span>{settings.tiktokHandle}</span>
-                </div>
-              </a>
             </div>
 
             {/* Dynamic WhatsApp Business */}

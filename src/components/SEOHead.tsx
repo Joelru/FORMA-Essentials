@@ -23,7 +23,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
     }
 
     const descriptionText = selectedProductModal
-      ? `${selectedProductModal.name} en Ocaña ($${selectedProductModal.price.toLocaleString('es-CO')} COP). ${selectedProductModal.description} Entrega rápida en Ocaña, pago contra entrega, Nequi o Daviplata.`
+      ? `${selectedProductModal.name} en Ocaña ($${selectedProductModal.price.toLocaleString('es-CO')} COP). ${selectedProductModal.description} Entrega rápida en Ocaña, pago contra entrega o Nequi.`
       : 'FORMA Estudio & Cosmética por Eslen en Ocaña, Norte de Santander. Diseño de cejas, depilación en cera o Gillette, pigmentación semipermanente y productos de cuidado para cejas, pestañas y rostro con domicilio rápido.';
 
     const setMeta = (selector: string, attr: string, content: string) => {
@@ -94,7 +94,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
           telephone: `+57${settings.whatsappNumber.replace(/\D/g, '')}`,
           priceRange: '$$',
           currenciesAccepted: 'COP',
-          paymentAccepted: 'Efectivo Contra Entrega, Nequi, Daviplata, Transferencia',
+          paymentAccepted: 'Efectivo Contra Entrega, Nequi, Transferencia',
           founder: {
             '@type': 'Person',
             name: settings.ownerName || 'Eslen',
@@ -137,7 +137,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
               closes: '18:30',
             },
           ],
-          sameAs: [settings.instagramUrl, settings.tiktokUrl].filter(Boolean),
+          sameAs: [settings.instagramUrl].filter(Boolean),
           aggregateRating: {
             '@type': 'AggregateRating',
             ratingValue: '4.9',
@@ -230,7 +230,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeView }) => {
               name: '¿Tienen domicilios de productos de cuidado de cejas y rostro con pago contra entrega en Ocaña?',
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: 'Sí, FORMA realiza despachos rápidos el mismo día en todos los barrios del casco urbano de Ocaña, Norte de Santander. Aceptamos Pago Contra Entrega en efectivo, Nequi y Daviplata.',
+                text: 'Sí, FORMA realiza despachos rápidos el mismo día en todos los barrios del casco urbano de Ocaña, Norte de Santander. Aceptamos Pago Contra Entrega en efectivo y Nequi.',
               },
             },
           ],
