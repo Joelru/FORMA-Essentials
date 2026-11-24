@@ -173,7 +173,7 @@ export const CatalogSection: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-7">
             {filteredProducts.map((product) => {
               const isOutOfStock = product.paused || product.stock <= 0;
               const qtyInCart = getProductCartQuantity(product.id);
@@ -183,7 +183,7 @@ export const CatalogSection: React.FC = () => {
               return (
                 <article
                   key={product.id}
-                  className={`group bg-white rounded-2xl border transition-all duration-300 flex flex-col overflow-hidden ${
+                  className={`group bg-white rounded-xl sm:rounded-2xl border transition-all duration-300 flex flex-col overflow-hidden ${
                     qtyInCart > 0
                       ? 'border-[#B76E79] shadow-luxury ring-1 ring-[#F4C2C2]'
                       : 'border-[#F4C2C2]/50 shadow-sm hover:shadow-luxury'
@@ -204,7 +204,7 @@ export const CatalogSection: React.FC = () => {
                     {/* Top Left Optional Badge */}
                     {product.badge && (
                       <span
-                        className={`absolute top-3 left-3 px-3 py-1 rounded-full text-[11px] font-bold tracking-wide shadow-sm ${
+                        className={`absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[11px] font-bold tracking-wide shadow-sm max-w-[calc(100%-1rem)] truncate ${
                           product.badge === 'Recomendado por Eslen'
                             ? 'bg-[#2D2926] text-[#FDF2F4]'
                             : product.badge === 'Más Vendido'
@@ -218,24 +218,25 @@ export const CatalogSection: React.FC = () => {
 
                     {/* Top Right In-Cart Badge */}
                     {qtyInCart > 0 && !isOutOfStock && (
-                      <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[#6B9080] text-white text-[11px] font-bold shadow-md animate-pop">
-                        {qtyInCart} en tu bolsa
+                      <span className="absolute top-2 right-2 sm:top-3 sm:right-3 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[#6B9080] text-white text-[9px] sm:text-[11px] font-bold shadow-md animate-pop">
+                        {qtyInCart} <span className="hidden sm:inline">en tu bolsa</span>
                       </span>
                     )}
 
                     {/* Stock Indicator Pill */}
-                    <div className="absolute bottom-3 left-3">
+                    <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3">
                       {isOutOfStock ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#2D2926]/90 text-white text-[11px] font-semibold">
-                          <AlertCircle className="w-3 h-3 text-[#F4C2C2]" />
-                          Agotado Temporalmente
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[#2D2926]/90 text-white text-[9px] sm:text-[11px] font-semibold">
+                          <AlertCircle className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#F4C2C2]" />
+                          <span className="sm:hidden">Agotado</span>
+                          <span className="hidden sm:inline">Agotado Temporalmente</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm text-[#2D2926] text-[11px] font-medium shadow-sm">
-                          <PackageCheck className="w-3.5 h-3.5 text-[#6B9080]" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-white/95 backdrop-blur-sm text-[#2D2926] text-[9px] sm:text-[11px] font-medium shadow-sm">
+                          <PackageCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#6B9080]" />
                           {product.stock === 1
-                            ? '¡Última unidad!'
-                            : `${product.stock} disponibles`}
+                            ? '¡Última!'
+                            : `${product.stock} disp.`}
                         </span>
                       )}
                     </div>
@@ -243,41 +244,42 @@ export const CatalogSection: React.FC = () => {
                     {/* Quick View Button Overlay */}
                     <button
                       onClick={() => openProductDetail(product)}
-                      className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-white/95 hover:bg-[#2D2926] text-[#2D2926] hover:text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 transition-colors"
+                      aria-label={`Ver detalles de ${product.name}`}
+                      className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-white/95 hover:bg-[#2D2926] text-[#2D2926] hover:text-white text-xs font-semibold shadow-sm flex items-center gap-1.5 transition-colors"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      <span>Detalles</span>
+                      <span className="hidden sm:inline">Detalles</span>
                     </button>
                   </div>
 
                   {/* Card Content */}
-                  <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                  <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between">
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-[#B76E79]">
+                      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#B76E79] truncate">
                         {product.category}
                       </p>
                       <h3
                         onClick={() => openProductDetail(product)}
-                        className="font-serif text-xl font-bold text-[#2D2926] mt-1 cursor-pointer hover:text-[#B76E79] transition-colors line-clamp-2"
+                        className="font-serif text-sm sm:text-xl font-bold text-[#2D2926] mt-0.5 sm:mt-1 cursor-pointer hover:text-[#B76E79] transition-colors line-clamp-2 leading-snug"
                       >
                         {product.name}
                       </h3>
-                      <p className="text-xs text-[#2D2926]/70 mt-1.5 line-clamp-2 leading-relaxed">
+                      <p className="text-[11px] sm:text-xs text-[#2D2926]/70 mt-1 sm:mt-1.5 line-clamp-2 leading-relaxed">
                         {product.description}
                       </p>
                     </div>
 
                     {/* Price & Interactive Buy / Quantity Controls */}
-                    <div className="mt-4 pt-3.5 border-t border-[#FDF2F4] space-y-2.5">
-                      <div className="flex items-center justify-between gap-2">
+                    <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3.5 border-t border-[#FDF2F4] space-y-2 sm:space-y-2.5">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div className="min-w-0">
-                          <span className="block text-[10px] uppercase tracking-wider text-[#2D2926]/50">
+                          <span className="hidden sm:block text-[10px] uppercase tracking-wider text-[#2D2926]/50">
                             Precio Oficial
                           </span>
-                          <span className="font-serif text-xl sm:text-2xl font-bold text-[#2D2926]">
+                          <span className="font-serif text-base sm:text-2xl font-bold text-[#2D2926]">
                             {formatCOP(product.price, false)}
                           </span>
-                          <span className="text-[10px] font-semibold text-[#2D2926]/50 ml-1">
+                          <span className="text-[9px] sm:text-[10px] font-semibold text-[#2D2926]/50 ml-1">
                             COP
                           </span>
                         </div>
@@ -286,7 +288,7 @@ export const CatalogSection: React.FC = () => {
                         {isOutOfStock ? (
                           <button
                             disabled
-                            className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-400 cursor-not-allowed shrink-0"
+                            className="w-full sm:w-auto px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-semibold bg-gray-100 text-gray-400 cursor-not-allowed shrink-0"
                           >
                             Agotado
                           </button>
@@ -294,13 +296,13 @@ export const CatalogSection: React.FC = () => {
                           <button
                             type="button"
                             onClick={(e) => handleInitialBuy(product, e)}
-                            className="px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#B76E79] hover:bg-[#9A5660] text-white flex items-center gap-2 transition-all shadow-sm active:scale-95 shrink-0"
+                            className="w-full sm:w-auto justify-center px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-[#B76E79] hover:bg-[#9A5660] text-white flex items-center gap-1.5 sm:gap-2 transition-all shadow-sm active:scale-95 shrink-0"
                           >
-                            <ShoppingBag className="w-4 h-4" />
+                            <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>Comprar</span>
                           </button>
                         ) : (
-                          <div className="flex items-center bg-[#FDF2F4] border-2 border-[#B76E79] rounded-xl p-1 shadow-sm animate-pop shrink-0">
+                          <div className="flex items-center justify-between sm:justify-start w-full sm:w-auto bg-[#FDF2F4] border-2 border-[#B76E79] rounded-xl p-1 shadow-sm animate-pop shrink-0">
                             <button
                               type="button"
                               onClick={() => handleDecrement(product, qtyInCart)}
@@ -309,7 +311,7 @@ export const CatalogSection: React.FC = () => {
                                   ? 'Quitar producto del carrito'
                                   : 'Disminuir cantidad'
                               }
-                              className="w-8 h-8 rounded-lg bg-white hover:bg-[#F4C2C2]/40 text-[#2D2926] flex items-center justify-center transition-colors active:scale-90 shadow-sm"
+                              className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white hover:bg-[#F4C2C2]/40 text-[#2D2926] flex items-center justify-center transition-colors active:scale-90 shadow-sm"
                             >
                               {qtyInCart === 1 ? (
                                 <Trash2 className="w-3.5 h-3.5 text-[#B76E79]" />
@@ -318,11 +320,11 @@ export const CatalogSection: React.FC = () => {
                               )}
                             </button>
 
-                            <div className="px-3 text-center min-w-[38px]">
-                              <span className="block text-sm font-bold text-[#2D2926] leading-none">
+                            <div className="px-2 sm:px-3 text-center min-w-[32px] sm:min-w-[38px]">
+                              <span className="block text-xs sm:text-sm font-bold text-[#2D2926] leading-none">
                                 {qtyInCart}
                               </span>
-                              <span className="block text-[9px] font-semibold text-[#B76E79] uppercase tracking-tighter mt-0.5">
+                              <span className="block text-[8px] sm:text-[9px] font-semibold text-[#B76E79] uppercase tracking-tighter mt-0.5">
                                 {qtyInCart === 1 ? 'unidad' : 'unids'}
                               </span>
                             </div>
@@ -336,7 +338,7 @@ export const CatalogSection: React.FC = () => {
                                   ? 'Stock máximo alcanzado'
                                   : 'Agregar una unidad más'
                               }
-                              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
+                              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center transition-all shadow-sm ${
                                 atMaxStock
                                   ? 'bg-gray-200/80 text-gray-400 cursor-not-allowed'
                                   : 'bg-[#B76E79] hover:bg-[#9A5660] text-white active:scale-90'
@@ -350,7 +352,7 @@ export const CatalogSection: React.FC = () => {
 
                       {/* Stock Validation & Quick Checkout Feedback Bar when Product is in Cart */}
                       {qtyInCart > 0 && !isOutOfStock && (
-                        <div className="pt-1 flex items-center justify-between gap-2 text-[11px] animate-fadeIn">
+                        <div className="pt-1 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 text-[10px] sm:text-[11px] animate-fadeIn">
                           <span
                             className={`font-medium truncate ${
                               atMaxStock || stockLimitNoticeId === product.id
@@ -359,10 +361,10 @@ export const CatalogSection: React.FC = () => {
                             }`}
                           >
                             {product.stock === 1
-                              ? '✦ Única unidad disponible en stock'
+                              ? '✦ Única unidad'
                               : atMaxStock
-                              ? `✦ Máximo stock disponible (${product.stock} uds)`
-                              : `✓ Puedes sumar hasta ${remainingStock} más`}
+                              ? `✦ Máx. (${product.stock} uds)`
+                              : `✓ +${remainingStock} disp.`}
                           </span>
 
                           <button
